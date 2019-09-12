@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tournamaker",
+  "private_key_id": "238379ff49177ec4ac28c8d3aec705b40f2c51d2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC3qf73A4C4LzSe\n9ybR9ROgMTkcbDndhcTcuCbOjM87PIDVtae5dFoT0sh3gzJyufFjYBhIUJ4AjCZX\n0GtTKs9hRdDVmrB+iRLXxgIQUxVelU+rOt5b0xwavkbWmdiMvtsze4uSQdVQl3Pp\nalSpMhmuyWNqBV8kkMRDgjZ56HvhNDHV/wbsYloTEOnSsfLgRH22HqiwhVtECiNw\neWt0OdiPgy5I/sqdUw2/bldIc2s5ugyVNqIZBNVjx2FsqiDYITWfxFJ5thxTW4LK\nr83BdsmokHpiBuNdQlBwHfDaiduR602uKe0t/9QYkFh4BLOydOCNYZNR0GskKq/g\nXVq8BLr3AgMBAAECggEAGzL8NMWahuxKvS353EcQmH0hqZFngmRgkpVc/eLBf9LG\ne5+yzpaqDlx9XqGZ036w/lgJUJBLzeXzeba+ZislWhD2S+PkNmEDXtwOiy9ar06q\nZT/LFUsu0tER+Y8AEFvlZ3ro4QiJ2C0Nt+gM0J/ASO+/HsDb5bTgs+SxP52L1v5d\nF19rcjyWf16ywFW9pw1DJ4M/Fxf/NB5FE8GYyyBAT3lGTcwZ3vafnH3EzgQ2Xrkg\n2VJjRVW1PP++XkJjnR9J9Z/D7+c1qhTuJMhtPtxJZY98V6lYSZlvlbkyDROx3uWX\n2px1RDufoN8oHv1QOep1r6YDWPK+PfoMC3Xmp9UPgQKBgQDZ6pP3L0EbSLD/mZME\ngtKWh812JQ28vwcYZwXXRPSajJpMiGs17G4jof19jLE6z3Muf5go0DAI9/o3It+e\n6uKCQkImTm2o5Rd3Ljz69RQI9Wvu5xoHqq/tF2aluBoCBVVlEYOXqtDdFOKhsz6V\nsw1/MrYyGQadgBpHHFYSMm9fgQKBgQDXwv7XnjchwDOFA7VAuAZs5A5Q/OKb3Zy8\nTS64jWh4WdUKBxjsncjLfQ9T49nQAniSm8qjpye9CbhD3EfuuxDNiIlK64NjWKyE\nlSqrQII9Zm3PF9y66aQEH0KK5KtN8pKJ+tHipk6bhs2kq5lWPXoKB+uRXEoAr/cx\nRM0otSpWdwKBgQCB2RhgAuVNp6voMg97caSgE72m939PB5jnvoOpeSozaTKMBgG0\nOPSMAPt2Mz5r568fduIo95yXy4NqFTqgjB96NJcMElGfgRrRZljpxN0yVWMCEOze\nwqNfqED+4EuHBrySo7QAzMT153r/lTnmo7GYKJSOF4FsmieOVeEnqKvagQKBgQC8\nl1CxnzWJZrqhlXAktbXIED8DQ0e//aE2ZjBkWBXsvHieXz3F9NTCKPnw1cRZMQ+6\n9jnVehIeBhTuG+k0Hoa9YI7A0cLyX1vMN6YoMialDJcG4VCqf/ZBNCGxzdZ+N30m\n5fn3Jm6nOtkdCnDpFKtLgUjCsextVWG3yu+YmWH8WQKBgBJfDYXJr2WN6RWLHkRf\nIeMPApi49zxI/30H97dYJknHVo+Q20wbLiENmdYAWnvFNAoCRPShtpzAEuuiHDae\ngKswvMq9R6Lj4R6IwSg40WrfcPBFnPSLFREccILVDu0CAHwAofh4x+ae7PuRpXWt\nqkahKAk58MqnElecSlSfXCYW\n-----END PRIVATE KEY-----\n",
+  "client_email": "service@tournamaker.iam.gserviceaccount.com",
+  "client_id": "117493881800327342531",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service%40tournamaker.iam.gserviceaccount.com"
+}

@@ -1,0 +1,11 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+service: default
+
+handlers:
+- url: /.*
+  script: endpoints.app
+
+env_variables:
+  FIREBASE_PROJECT_ID: 'tournamaker'
