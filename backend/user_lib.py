@@ -1,3 +1,4 @@
+from google.appengine.ext import ndb
 from models import UserModel
 
 def create_user(user_cred):
@@ -9,6 +10,14 @@ def create_user(user_cred):
 
 		Returns: A key object for a UserModel in the datastore.
 	'''
+	# Instantiate the model in memory
+	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
+	user = UserModel(key=ndb.Key(UserModel, user_cred['sub']), name=user_cred.get('name', ""), email=user_cred.get('email'))
+
+	# Add the model to the datastore
+	user_key = user.put()
+
+	return user_key
 
 def read_user(user_cred):
 	'''
@@ -18,13 +27,13 @@ def read_user(user_cred):
 		Parameters:
 			- user_cred: A set of firebase user credentials.
 
-		Returns: A Key object for a UserModel in the datastore.
+		Returns: A UserModel entity.
 	'''
-	# Instantiate the model in memory
-	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
-	user = UserModel(key=ndb.Key(UserModel, user_cred['sub']), name=user_cred.get('name'), email=user_cred.get('email'))
+	user_key = ndb.Key(UserModel, user_cred['sub'])
+	user_entity = user_key.get()
 
-	# Add the model to the datastore
-	user_key = user.put()
+	if not user_entity:
+		user_key = create_user(user_cred)
+		user_entity = user_key.get()
 
-	return user_key
+	return user_entity
