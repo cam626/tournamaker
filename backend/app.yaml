@@ -5,10 +5,7 @@ service: default
 
 handlers:
 - url: /.*
-  script: endpoints.app
-  
-- url: /user(?:/.*)?
-  script: user_endpoints.app
+  script: main.app
 
 env_variables:
   FIREBASE_PROJECT_ID: 'tournamaker'
