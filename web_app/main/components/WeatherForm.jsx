@@ -1,6 +1,6 @@
 const React = require('react');
 
-module.exports = React.createClass({
+export default class WeatherForm extends React.Component {
 	onFormSubmit(event) {
 		event.preventDefault();
 		if (this.refs.city.value.length > 0) {
@@ -9,7 +9,7 @@ module.exports = React.createClass({
 			});
 		}
 		this.refs.city.value = "";
-	},
+	}
 	render() {
 		return (
 			<div>
@@ -21,4 +21,4 @@ module.exports = React.createClass({
 			</div>
 		);
 	}
-});
+}

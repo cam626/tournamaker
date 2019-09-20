@@ -1,5 +1,5 @@
 const React = require('react');
-const Nav = require('Nav');
+const Nav = require('./Nav');
 
 module.exports = (props) => (
 	<div>

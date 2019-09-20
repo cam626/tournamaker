@@ -2,7 +2,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'script!jquery/dist/jquery.min.js',
+    'script-loader!jquery/dist/jquery.min.js',
     './main/app.jsx'
   ],
   output: {
@@ -23,14 +23,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      Main: "main/components/Main.jsx",
-      Nav: "main/components/Nav.jsx", 
-      Weather: "main/components/Weather.jsx",
-      WeatherForm: "main/components/WeatherForm.jsx",
-      WeatherResults: "main/components/WeatherResults.jsx",
-      About: "main/components/About.jsx",
-      Examples: "main/components/Examples.jsx",
-      OpenWeatherMap: "main/api/OpenWeatherMap.jsx"
+      
     },
     extensions: ['.js', '.jsx']
   },
@@ -41,7 +34,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'es2015', 'stage-0']
+          presets: ['react', 'env']
         }
       },
       { 

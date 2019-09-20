@@ -1,14 +1,15 @@
 const React = require('react');
-const WeatherForm = require('WeatherForm');
-const WeatherResults = require('WeatherResults');
-const OpenWeatherMap = require('OpenWeatherMap');
+const WeatherForm = require('./WeatherForm');
+const WeatherResults = require('./WeatherResults');
+const OpenWeatherMap = require('../api/OpenWeatherMap');
 
-module.exports = React.createClass({
+export default class Weather extends React.Component {
 	getInitialState() {
 		return {
 			weather: "It's 78 degrees in Philidelhia"
 		};
-	},
+	}
+
 	handleNewData(updates) {
 		OpenWeatherMap.getTemp(updates.city).then(temp => {
 			updates.weather = "It's " + temp + " degrees in " + updates.city;
@@ -19,7 +20,8 @@ module.exports = React.createClass({
 		})
 		updates.weather = "Loading...";
 		this.setState(updates);
-	},
+	}
+
 	render() {
 		return (
 			<div>
@@ -28,4 +30,4 @@ module.exports = React.createClass({
 			</div>
 		);
 	}
-});
+}
