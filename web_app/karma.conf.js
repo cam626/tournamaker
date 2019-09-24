@@ -1,16 +1,17 @@
 const webpackConfig = require('./webpack.config.js');
 
-webpackConfig.devtool = 'inline-source-map';
-webpackConfig.entry = {};
-webpackConfig.watch = true;
+webpackConfig.mode = 'development';
 
 module.exports = function (config) {
 	config.set({
 		basePath: '',
-    	webpack: webpackConfig, 
-		browsers: ['Chrome'],
+    	webpack: webpackConfig,
+    	port: 9876,
+        colors: true,
 		singleRun: true,
+        concurrency: Infinity,
 		frameworks: ['mocha', 'chai'],
+		plugins: ['karma-*'],
 		files: ['./test/**/*.+(js|jsx)'],
 		preprocessors: {
 			'./test/**/*.+(js|jsx)': ['webpack', 'sourcemap'],
@@ -30,3 +31,8 @@ module.exports = function (config) {
 		browserNoActivityTimeout: 100000
 	})
 }
+
+
+
+
+        
