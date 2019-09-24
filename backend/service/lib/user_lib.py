@@ -1,5 +1,5 @@
 from google.appengine.ext import ndb
-from models import UserModel
+from models.models import UserModel
 
 def create_user(user_cred):
 	'''
