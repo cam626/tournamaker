@@ -1,6 +1,6 @@
 
 from lib.auth_lib import authenticate_token
-import lib.user_lib
+from lib import user_lib
 
 from flask import jsonify, request
 import logging as logger

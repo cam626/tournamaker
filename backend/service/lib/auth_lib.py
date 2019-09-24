@@ -1,7 +1,10 @@
 import google.auth.transport.requests as google_request
 import google.oauth2.id_token
+import requests_toolbelt.adapters.appengine
 import logging as logger
 
+# These lines are needed for the google.oauth2.id_token.verify_firebase_token call
+requests_toolbelt.adapters.appengine.monkeypatch()
 HTTP_REQUEST = google_request.Request()
 
 def authenticate_token(request):
@@ -15,14 +18,11 @@ def authenticate_token(request):
 		Returns: The corresponding user credentials of the given auth token or
 			None if the token is not valid.
 	'''
-	logger.info("Authenticating User...")
 	id_token = request.headers.get('Authorization', "").split(' ').pop()
 	
 	# Handle case with no authorization
-	print("Before")
 	user_cred = google.oauth2.id_token.verify_firebase_token(
 		id_token, HTTP_REQUEST)
-	print("After")
 	
 	if not user_cred:
 		logger.warn("User Authentication Failed")
