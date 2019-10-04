@@ -32,10 +32,10 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components|index\n.js)/,
-        loader: 'babel-loader'
-        // resolve: {
-        //   extensions: ['.js', '.jsx']
-        // },
+        loader: 'babel-loader',
+        resolve: {
+          extensions: ['.js', '.jsx']
+        }
       },
       { 
         test: /\.css$/, 

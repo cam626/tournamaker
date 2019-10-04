@@ -1,29 +1,37 @@
 import React from 'react';
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-import { Link } from 'react-router-dom';
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
+import { NavLink as RRNavLink } from 'react-router-dom';
 
-const Header = () => {
-	return (
-		<header>
-			<Navbar bg='light' expand='lg' sticky='top'>
-				<Navbar.Brand>
-					<Link to='/'>React-Bootstrap</Link>
-				</Navbar.Brand>
-				<Navbar.Toggle aria-controls='basic-navbar-nav' />
-				<Navbar.Collapse id='basic-navbar-nav'>
-					<Nav className='mr-auto'>
-						<LinkContainer to='/'>
-							<NavItem>Home</NavItem>
-						</LinkContainer>
-						<LinkContainer to='/signin'>
-							<NavItem>Sign In</NavItem>
-						</LinkContainer>
+export default class Header extends React.Component {
+ 	constructor(props) {
+   		super(props);
+
+	   	this.toggle = this.toggle.bind(this);
+	   	this.state = { isOpen: false };
+	}
+
+	toggle() {
+		this.setState({
+			isOpen: !this.state.isOpen
+	    });
+  	}
+
+	render() {
+		return (
+			<Navbar color='light' light expand='md' sticky='top'>
+				<NavbarBrand to='/' tag={RRNavLink}>Tournamaker</NavbarBrand>
+				<NavbarToggler onClick={this.toggle} />
+				<Collapse isOpen={this.state.isOpen} navbar>
+					<Nav className='ml-auto' navbar>
+						<NavItem>
+							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
+						</NavItem>
 					</Nav>
-				</Navbar.Collapse>
+				</Collapse>
 			</Navbar>
-		</header>
-	);
-};
-
-export default Header;
+		);
+	}
+}
