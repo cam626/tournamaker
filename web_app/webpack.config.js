@@ -2,7 +2,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'script-loader!jquery/dist/jquery.min.js',
+//    'script-loader!jquery/dist/jquery.min.js',
     './main/app.jsx'
   ],
   output: {
@@ -31,11 +31,11 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'env']
-        }
+        exclude: /(node_modules|bower_components|index\n.js)/,
+        loader: 'babel-loader'
+        // resolve: {
+        //   extensions: ['.js', '.jsx']
+        // },
       },
       { 
         test: /\.css$/, 
