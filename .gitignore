@@ -5,6 +5,9 @@ backend/constants.json
 node_modules/
 package-lock.json
 
+# minified files
+app.min.js
+
 # webpack files
 448c34a56d699c29117adc64c43affeb.woff2
 89889688147bd7575d6327160d64e760.svg
