@@ -7,9 +7,9 @@ module.exports = function (config) {
 		basePath: '',
     	webpack: webpackConfig,
     	port: 9876,
-        colors: true,
+		colors: true,
 		singleRun: true,
-        concurrency: Infinity,
+		concurrency: Infinity,
 		frameworks: ['mocha', 'chai'],
 		plugins: ['karma-*'],
 		files: ['./test/**/*.+(js|jsx)'],
@@ -29,10 +29,5 @@ module.exports = function (config) {
 			noInfo: true
 		},
 		browserNoActivityTimeout: 100000
-	})
-}
-
-
-
-
-        
+	});
+};
