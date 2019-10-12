@@ -1,19 +1,35 @@
 import React from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { NavLink as RRNavLink } from 'react-router-dom';
+import firebase from 'firebase';
 
 export default class Header extends React.Component {
  	constructor(props) {
    		super(props);
 
 	   	this.toggle = this.toggle.bind(this);
-	   	this.state = { isOpen: false };
+	   	this.state = {
+	   		isOpen: false,
+	   		loggedIn: false
+	   	};
 	}
 
 	toggle() {
-		this.setState({
-			isOpen: !this.state.isOpen
-	    });
+		this.setState({ isOpen: !this.state.isOpen });
+  	}
+
+  	signOut(e) {
+  		e.preventDefault();
+  		firebase.auth().signOut();
+  		window.location.assign('/');
+  	}
+
+	componentDidMount() {
+    	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+			(user) => {
+				this.setState({ loggedIn: !!user });
+			}
+    	);
   	}
 
 	render() {
@@ -27,7 +43,10 @@ export default class Header extends React.Component {
 							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
 						</NavItem>
 						<NavItem>
-							<NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
+							{this.state.loggedIn ?
+								<NavLink onClick={this.signOut}>Log Out</NavLink>
+								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
+							}
 						</NavItem>
 					</Nav>
 				</Collapse>

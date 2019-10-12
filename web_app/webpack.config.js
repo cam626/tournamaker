@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 
-module.exports = {
+const config = {
   entry: [
 //    'script-loader!jquery/dist/jquery.min.js',
     './main/app.jsx'
@@ -18,9 +18,6 @@ module.exports = {
       'jQuery': 'jquery'
     }),
   ],
-  optimization: {
-    minimize: true
-  },
   resolve: {
     alias: {
       
@@ -68,4 +65,14 @@ module.exports = {
     ]
   },
   devtool: 'inline-source-map'
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === 'development') {
+    config.optimization = { minimize: false };
+  }
+  if (argv.mode === 'production') {
+    config.optimization = { minimize: false };
+  }
+  return config;
 };
