@@ -2,9 +2,8 @@ import React from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { NavLink as RRNavLink } from 'react-router-dom';
 import firebase from 'firebase';
-import { withRouter } from 'react-router-dom';
 
-class Header extends React.Component {
+export default class Header extends React.Component {
  	constructor(props) {
    		super(props);
 
@@ -55,5 +54,3 @@ class Header extends React.Component {
 		);
 	}
 }
-
-export default withRouter(Header);
