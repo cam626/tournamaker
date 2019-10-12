@@ -1,49 +1,51 @@
 import React from 'react';
-import { Container } from 'reactstrap';
+import { Container, Row } from 'reactstrap';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
-import firebaseui from 'firebaseui';
+import firebaseConfig from '../../constants/firebaseConfig';
+import { getDisplayName } from '../../api/displayname';
+
+firebase.initializeApp(firebaseConfig);
+
+const uiConfig = {
+	callbacks: { signInSuccessWithAuthResult: () => false },
+	signInOptions: [
+		firebase.auth.EmailAuthProvider.PROVIDER_ID,
+		{
+			provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+			scopes: [
+				'https://www.googleapis.com/auth/userinfo.email'
+			]
+		}
+	],
+	signInFlow: 'popup',
+	// Terms of service url.
+	tosUrl: () => {},
+	// Privacy policy url.
+	privacyPolicyUrl: () => {}
+};
 
 export default class SignIn extends React.Component {
-	constructor(props) {
-		super(props);
-		this.ui = new firebaseui.auth.AuthUI(firebase.auth());
-		this.uiConfig = {
-			allbacks: {
-    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-      // User successfully signed in.
-      // Return type determines whether we continue the redirect automatically
-      // or whether we leave that to developer to handle.
-      return true;
-    },
-    uiShown: function() {
-      // The widget is rendered.
-      // Hide the loader.
-      document.getElementById('loader').style.display = 'none';
-    		}
-  		},
-			signInOptions: [
-				firebase.auth.EmailAuthProvider.PROVIDER_ID,
-				{
-					provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-					scopes: [
-						'https://www.googleapis.com/auth/contacts.readonly'
-					]
+	componentDidMount() {
+    	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+			(user) => {
+				if (user) {
+					getDisplayName() ? this.props.history.push('/user')
+						: this.props.history.push('/user/displayname');
 				}
-			]
-		};
-		this.props.history.push('/user');
-	}
-
-	ComponentDidMount() {
-		this.ui.start('#firebaseui-auth-container', this.uiConfig);
-	}
+			}
+    	);
+  	}
 
 	render() {
 		return (
 			<Container>
-				<h1>Sign in to Tournamaker</h1>
-				<div id='firebaseui-auth-container' />
-				<h3 id='loader'>Loading...</h3>
+				<Row>
+					<h1>Sign in to Tournamaker</h1>
+				</Row>
+				<Row>
+					<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+				</Row>
 			</Container>
 		);
 	}
