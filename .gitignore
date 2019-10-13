@@ -1,12 +1,12 @@
 backend/constants.json
-
+web_app/main/constants/firebaseConfig.js
 
 # npm files
 node_modules/
 package-lock.json
 
 # minified files
-app.min.js
+web_app/**/*.min.js
 
 # webpack files
 448c34a56d699c29117adc64c43affeb.woff2
