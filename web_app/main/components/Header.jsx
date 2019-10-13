@@ -8,27 +8,26 @@ export default class Header extends React.Component {
    		super(props);
 
 	   	this.toggle = this.toggle.bind(this);
+	   	this.signOut = this.signOut.bind(this);
 	   	this.state = {
 	   		isOpen: false,
 	   		loggedIn: false
 	   	};
 	}
 
-	toggle() {
-		this.setState({ isOpen: !this.state.isOpen });
-  	}
+	toggle() { this.setState({ isOpen: !this.state.isOpen }); }
 
   	signOut(e) {
   		e.preventDefault();
-  		firebase.auth().signOut();
-  		window.location.assign('/');
+  		firebase.auth().signOut().then(() => {
+  			this.setState({ loggedIn: false });
+  			this.props.history.push('/');
+  		});
   	}
 
 	componentDidMount() {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-			(user) => {
-				this.setState({ loggedIn: !!user });
-			}
+			(user) => { this.setState({ loggedIn: !!user }); }
     	);
   	}
 
@@ -43,7 +42,8 @@ export default class Header extends React.Component {
 							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
 						</NavItem>
 						<NavItem>
-							{this.state.loggedIn ?
+							{
+								this.state.loggedIn ?
 								<NavLink onClick={this.signOut}>Log Out</NavLink>
 								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
 							}
