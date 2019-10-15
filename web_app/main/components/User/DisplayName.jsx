@@ -1,30 +1,27 @@
 import React from 'react';
-import { Container, Row, Alert } from 'reactstrap';
+import { Container, Row, Label, Button, 
+	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
 import { getDisplayName, updateDisplayName } from '../../api/displayname';
 
 export default class Header extends React.Component {
  	constructor(props) {
    		super(props);
 
+   		this.toUser = this.toUser.bind(this);
 	   	this.onError = this.onError.bind(this);
-	   	this.onDismiss = this.onDismiss.bind(this);
 	   	this.state = {
-	   		visible: false,
 	   		displayName: '',
-	   		error: 'Error: Invalid Display Name',
-	   		alert: 'danger'
+	   		error: '',
+	   		valid: false
 	   	};
 	}
 
 	onError(newError) { 
 		this.setState({ 
-			visible: true,
 			error: newError,
-			alert: 'danger' 
+			valid: false 
 		}); 
 	}
-	
-	onDismiss() { this.setState({ visible: false }); }
 	
 	componentDidMount() {
     	getDisplayName().then((fetchedDisplayName) => {
@@ -32,35 +29,24 @@ export default class Header extends React.Component {
     	});
   	}
 
+  	toUser() { this.props.history.push('/'); }
+
   	submit() {
+  		e.preventDefault();
   		onDismiss();
-  		const newDisplayName = getinput.trim();
+  		const newDisplayName = this.state.inputDisplayName.trim();
   		updateDisplayName(newDisplayName).then(() => {
   			this.setState({ 
+  				displayName: newDisplayName
   				visible: true, 
-  				alert: 'success' 
+  				valid: true 
   			});
-  		}).catch((newError) => { this.onError(newError); });
+		}).catch((newError) => { this.onError(`Error: ${newError}`); });
   	}
 
 	render() {
 		return (
 			<Container>
-				<Row>
-					{
-						this.state.alert == 'danger' ?
-						<Alert color='danger' isOpen={visible} toggle={onDismiss}>
-							{
-								this.state.error == 'taken' ?
-								<div>Error: That Display Name has been taken, please choose a different one.</div>
-								: <div>this.state.error</div>
-							}
-						</Alert>
-						: <Alert color='success' isOpen={visible} toggle={onDismiss}>
-							Display Name successfully updated.
-						</Alert>
-					}
-      			</Row>
 				<Row>
 					{
 						this.state.displayName ?
@@ -69,7 +55,23 @@ export default class Header extends React.Component {
 					}
 				</Row>
 				<Row>
-				// add in form and make the alert a form validation feedback
+					<Form onSubmit={ (e) => this.submit(e) }>
+						<FormGroup>
+						<Label for="displayName">Display Name</Label>
+							<Input type='text' name='displayName' id='displayName' placeholder='Display Name'
+								value={inputDisplayName} 
+								valid={this.state.valid}
+								invalid={this.state.valid}
+							/>
+							<FormFeedback valid>You successfully updated your email</FormFeedback>
+							<FormFeedback invalid>{this.state.error}</FormFeedback>
+							<FormText>Your Display Name will be how other users can identify you.</FormText>
+						</FormGroup>
+						{
+							this.state.displayName && <Button type='button' onClick={this.toUser}>Return to User</Button>
+      					}
+      					<Button>Submit</Button>
+					</Form>
 				</Row>
 			</Container>
 		);

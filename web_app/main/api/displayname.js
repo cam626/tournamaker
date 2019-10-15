@@ -7,7 +7,7 @@ const getDisplayName = () => {
 		headers: {
 			Authorization: `Bearer ${authToken}`
 		}
-	}).then((response) => response.displayName);
+	}).then((response) => response.display_name);
 };
 
 const updateDisplayName = (newName) => {
@@ -17,7 +17,7 @@ const updateDisplayName = (newName) => {
 			Authorization: `Bearer ${authToken}`
 		},
 		body: JSON.stringify({
-			displayName: newName
+			display_name: newName
 		})
 	});
 };
