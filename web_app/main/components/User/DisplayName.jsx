@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Row, Label, Button, 
+import { Container, Row, Label, Button, Input, 
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
-import { getDisplayName, updateDisplayName } from '../../api/displayname';
+import { getDisplayName, updateDisplayName } from '../../api/displayName';
 
 export default class Header extends React.Component {
  	constructor(props) {
@@ -11,15 +11,16 @@ export default class Header extends React.Component {
 	   	this.onError = this.onError.bind(this);
 	   	this.state = {
 	   		displayName: '',
+	   		inputDisplayName: '',
 	   		error: '',
-	   		valid: false
+	   		valid: -1
 	   	};
 	}
 
 	onError(newError) { 
 		this.setState({ 
 			error: newError,
-			valid: false 
+			valid: 0
 		}); 
 	}
 	
@@ -31,15 +32,13 @@ export default class Header extends React.Component {
 
   	toUser() { this.props.history.push('/'); }
 
-  	submit() {
+  	submit(e) {
   		e.preventDefault();
-  		onDismiss();
   		const newDisplayName = this.state.inputDisplayName.trim();
   		updateDisplayName(newDisplayName).then(() => {
   			this.setState({ 
-  				displayName: newDisplayName
-  				visible: true, 
-  				valid: true 
+  				displayName: newDisplayName,
+  				valid: 1 
   			});
 		}).catch((newError) => { this.onError(`Error: ${newError}`); });
   	}
@@ -59,12 +58,11 @@ export default class Header extends React.Component {
 						<FormGroup>
 						<Label for="displayName">Display Name</Label>
 							<Input type='text' name='displayName' id='displayName' placeholder='Display Name'
-								value={inputDisplayName} 
-								valid={this.state.valid}
-								invalid={this.state.valid}
+								//value={this.state.inputDisplayName} 
+								valid={this.state.valid == 1}
 							/>
-							<FormFeedback valid>You successfully updated your email</FormFeedback>
-							<FormFeedback invalid>{this.state.error}</FormFeedback>
+							<FormFeedback valid>You successfully updated your Display Name</FormFeedback>
+							<FormFeedback valid={false}>{this.state.error}</FormFeedback>
 							<FormText>Your Display Name will be how other users can identify you.</FormText>
 						</FormGroup>
 						{

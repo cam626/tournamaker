@@ -1,5 +1,5 @@
-import { authToken } from '../../variables/user';
-import backendHostUrl from '../../constants/backend';
+import { authToken } from '../variables';
+import backendHostUrl from '../constants/backend';
 
 const getDisplayName = () => {
 	return fetch(`${backendHostUrl}/user`, {

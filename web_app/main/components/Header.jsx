@@ -8,7 +8,6 @@ export default class Header extends React.Component {
    		super(props);
 
 	   	this.toggle = this.toggle.bind(this);
-	   	this.signOut = this.signOut.bind(this);
 	   	this.state = {
 	   		isOpen: false,
 	   		loggedIn: false
@@ -19,10 +18,10 @@ export default class Header extends React.Component {
 
   	signOut(e) {
   		e.preventDefault();
-  		firebase.auth().signOut().then(() => {
+  		firebase.auth().signOut().then(function() {
   			this.setState({ loggedIn: false });
   			this.props.history.push('/');
-  		});
+  		}.bind(this));
   	}
 
 	componentDidMount() {
