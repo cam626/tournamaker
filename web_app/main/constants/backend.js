@@ -1,3 +1,3 @@
-const backendHostUrl = 'http://localhost:8080';
+const backendHostUrl = 'https://backend-dot-tournamaker.appspot.com/';
 
 export default backendHostUrl;

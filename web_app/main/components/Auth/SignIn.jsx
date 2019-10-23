@@ -5,6 +5,7 @@ import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
 import Global from '../../variables';
 import { getDisplayName } from '../../api/displayName';
+import { setAuthToken } from '../../api/authToken';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -31,8 +32,7 @@ export default class SignIn extends React.Component {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
 			(user) => {
 				if (user) {
-					user.getIdToken().then((token) => {
-						Global.authToken = token;
+					setAuthToken().then(() => {
 						getDisplayName().then((displayname) => {
 							displayname ? this.props.history.push('/user')
 							: this.props.history.push('/user/displayname');

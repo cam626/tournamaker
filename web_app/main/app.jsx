@@ -1,5 +1,9 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
+
+import 'whatwg-fetch';
+import 'promise-polyfill/src/polyfill';
+
 import { HashRouter, Switch, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Landing from './Landing';
