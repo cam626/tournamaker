@@ -13,15 +13,17 @@ import User from './components/User/User';
 import DisplayName from './components/User/DisplayName';
 
 ReactDOM.render(
-	<HashRouter>
-  		<Header />
-  		<Switch>
-			<Route exact path='/' component={Landing} />
-			<Route path='/signin' component={SignIn} />
-			<Route path='/user/displayname' component={DisplayName} />
-			<Route path='/user/' component={User} />
-			<Route path='*' component={_404} />
-		</Switch>
-	</HashRouter>,
+	<React.StrictMode>
+		<HashRouter>
+  			<Header />
+  			<Switch>
+				<Route exact path='/' component={Landing} />
+				<Route path='/signin' component={SignIn} />
+				<Route path='/user/displayname' component={DisplayName} />
+				<Route path='/user/' component={User} />
+				<Route path='*' component={_404} />
+			</Switch>
+		</HashRouter>
+	</React.StrictMode>,
 	document.getElementById('app')
 );

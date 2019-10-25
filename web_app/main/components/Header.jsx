@@ -2,7 +2,7 @@ import React from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { NavLink as RRNavLink, withRouter } from 'react-router-dom';
 import firebase from 'firebase';
-import { setAuthToken } from '../api/authToken';
+import { setAuthToken, setAuthTokenCookie, setAuthTokenFromCookie, deleteAuthTokenCookie, isLoggedIn } from '../api/authToken';
 
 class Header extends React.Component {
  	constructor(props) {
@@ -21,6 +21,7 @@ class Header extends React.Component {
   	signOut(e) {
   		e.preventDefault();
   		firebase.auth().signOut().then(() => {
+  			deleteAuthTokenCookie();
   			this.setState({ loggedIn: false });
   			this.props.history.push('/');
   		});
@@ -30,9 +31,12 @@ class Header extends React.Component {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
 			(user) => { 
 				user && setAuthToken();
+				user && setAuthTokenCookie();
 				this.setState({ loggedIn: !!user }); 
 			}
     	);
+    	setAuthTokenFromCookie();
+    	this.setState({ loggedIn: isLoggedIn() });
   	}
 
 	render() {

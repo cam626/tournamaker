@@ -5,7 +5,7 @@ import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
 import Global from '../../variables';
 import { getDisplayName } from '../../api/displayName';
-import { setAuthToken } from '../../api/authToken';
+import { setAuthToken, setAuthTokenCookie } from '../../api/authToken';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -33,6 +33,7 @@ export default class SignIn extends React.Component {
 			(user) => {
 				if (user) {
 					setAuthToken().then(() => {
+						setAuthTokenCookie();
 						getDisplayName().then((displayname) => {
 							displayname ? this.props.history.push('/user')
 							: this.props.history.push('/user/displayname');
@@ -51,6 +52,9 @@ export default class SignIn extends React.Component {
 				</Row>
 				<Row>
 					<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+				</Row>
+				<Row>
+					<h3>Note: we use cookies to keep you logged in!</h3>
 				</Row>
 			</Container>
 		);
