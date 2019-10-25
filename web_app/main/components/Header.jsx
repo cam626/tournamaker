@@ -1,12 +1,14 @@
 import React from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
-import { NavLink as RRNavLink } from 'react-router-dom';
+import { NavLink as RRNavLink, withRouter } from 'react-router-dom';
 import firebase from 'firebase';
+import { setAuthToken, setAuthTokenCookie, setAuthTokenFromCookie, deleteAuthTokenCookie, isLoggedIn } from '../api/authToken';
 
-export default class Header extends React.Component {
+class Header extends React.Component {
  	constructor(props) {
    		super(props);
 
+   		this.signOut = this.signOut.bind(this);
 	   	this.toggle = this.toggle.bind(this);
 	   	this.state = {
 	   		isOpen: false,
@@ -14,22 +16,27 @@ export default class Header extends React.Component {
 	   	};
 	}
 
-	toggle() {
-		this.setState({ isOpen: !this.state.isOpen });
-  	}
+	toggle() { this.setState({ isOpen: !this.state.isOpen }); }
 
   	signOut(e) {
   		e.preventDefault();
-  		firebase.auth().signOut();
-  		window.location.assign('/');
+  		firebase.auth().signOut().then(() => {
+  			deleteAuthTokenCookie();
+  			this.setState({ loggedIn: false });
+  			this.props.history.push('/');
+  		});
   	}
 
 	componentDidMount() {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-			(user) => {
-				this.setState({ loggedIn: !!user });
+			(user) => { 
+				user && setAuthToken();
+				user && setAuthTokenCookie();
+				this.setState({ loggedIn: !!user }); 
 			}
     	);
+    	setAuthTokenFromCookie();
+    	this.setState({ loggedIn: isLoggedIn() });
   	}
 
 	render() {
@@ -43,8 +50,12 @@ export default class Header extends React.Component {
 							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
 						</NavItem>
 						<NavItem>
-							{this.state.loggedIn ?
-								<NavLink onClick={this.signOut}>Log Out</NavLink>
+							{
+								this.state.loggedIn ?
+								<div>
+									<NavLink to='/user' tag={RRNavLink}>User</NavLink>
+									<NavLink onClick={this.signOut}>Log Out</NavLink>
+								</div>
 								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
 							}
 						</NavItem>
@@ -54,3 +65,5 @@ export default class Header extends React.Component {
 		);
 	}
 }
+
+export default withRouter(Header);

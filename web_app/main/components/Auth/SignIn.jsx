@@ -3,7 +3,9 @@ import { Container, Row } from 'reactstrap';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
-import { getDisplayName } from '../../api/displayname';
+import Global from '../../variables';
+import { getDisplayName } from '../../api/displayName';
+import { setAuthToken, setAuthTokenCookie } from '../../api/authToken';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -14,7 +16,7 @@ const uiConfig = {
 		{
 			provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
 			scopes: [
-				'https://www.googleapis.com/auth/userinfo.email'
+				'https:\/\/www.googleapis.com/auth/userinfo.email'
 			]
 		}
 	],
@@ -30,8 +32,13 @@ export default class SignIn extends React.Component {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
 			(user) => {
 				if (user) {
-					getDisplayName() ? this.props.history.push('/user')
-						: this.props.history.push('/user/displayname');
+					setAuthToken().then(() => {
+						setAuthTokenCookie();
+						getDisplayName().then((displayname) => {
+							displayname ? this.props.history.push('/user')
+							: this.props.history.push('/user/displayname');
+						});
+					});
 				}
 			}
     	);
@@ -45,6 +52,9 @@ export default class SignIn extends React.Component {
 				</Row>
 				<Row>
 					<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+				</Row>
+				<Row>
+					<h3>Note: we use cookies to keep you logged in!</h3>
 				</Row>
 			</Container>
 		);
