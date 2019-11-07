@@ -1,6 +1,7 @@
 
 from lib.auth_lib import authenticate_token
-from lib import tournament_lib
+from lib import tournament_lib, user_lib
+from datetime import datetime
 
 from flask import jsonify, request
 import logging as logger
@@ -44,13 +45,30 @@ def tournament_endpoints(app):
 		'''
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
+		json_body = request.get_json()
 
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return "Unauthorized", 401
 
+		# Check if there is already a tournament with this name
+		name = json_body.get("name")
+		
+		entity = tournament_lib.read_tournament(user_cred, name)
+		if entity is not None:
+			return "Tournament name in use", 400
+
 		# Create a tournament from the request body
-		json_body = request.get_json()
+		time_stamp = datetime.now()
+		json_body["created_date"] = time_stamp
 		tournament_key = tournament_lib.create_tournament(user_cred, **json_body)
+
+		# Now we need to add the tournament key to the list of tournaments on the user
+		user_entity = user_lib.read_user(user_cred)
+		if not isinstance(user_entity.tournaments, list):
+			user_entity.tournaments = []
+
+		user_entity.tournaments.append(tournament_key.urlsafe())
+		user_entity.put()
 
 		return jsonify({"tournament_key": tournament_key.urlsafe()})

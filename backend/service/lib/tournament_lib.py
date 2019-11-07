@@ -1,6 +1,9 @@
 from google.appengine.ext import ndb
 from models.models import Tournament, User
 
+def key_from_name(user_cred, name):
+	return ndb.Key(Tournament, name, parent=ndb.Key(User, user_cred['sub']))
+
 def create_tournament(user_cred, **kwargs):
 	'''
 		Create a new Tournament object in the datastore.
@@ -15,7 +18,7 @@ def create_tournament(user_cred, **kwargs):
 	'''
 	# Instantiate the model in memory
 	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
-	tournament_key = ndb.Key(Tournament, kwargs['name'], parent=ndb.Key(User, user_cred['sub']))
+	tournament_key = key_from_name(user_cred, kwargs["name"])
 	tournament = Tournament(key=tournament_key, **kwargs)
 
 	# Add the model to the datastore
@@ -23,21 +26,14 @@ def create_tournament(user_cred, **kwargs):
 
 	return tournament_key
 
-# def read_tournament(user_cred):
-# 	'''
-# 		Attempt to read a user attached to a set of user credentials. If the user credentials are
-# 		not associated with a user object, a new object will be created and returned.
+def read_tournament(user_cred, tournament):
+	'''
+		Attempt to read a tournament from a user based on the user credentials
+		and the name of the tournament.
 
-# 		Parameters:
-# 			- user_cred: A set of firebase user credentials.
+		Returns: A tournament entity or None if the tournament does not exist.
+	'''
+	tournament_key = key_from_name(user_cred, kwargs["name"])
+	entity = tournament_key.get()
 
-# 		Returns: A User entity.
-# 	'''
-# 	user_key = ndb.Key(User, user_cred['sub'])
-# 	user_entity = user_key.get()
-
-# 	if not user_entity:
-# 		user_key = create_user(user_cred)
-# 		user_entity = user_key.get()
-
-# 	return user_entity
+	return entity
