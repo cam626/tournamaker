@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
-from models.models import UserModel
+from models.models import User
+import logging as logger
 
 def create_user(user_cred):
 	'''
@@ -8,11 +9,11 @@ def create_user(user_cred):
 		Parameters:
 			- user_cred: A set of firebase user credentials.
 
-		Returns: A key object for a UserModel in the datastore.
+		Returns: A key object for a User in the datastore.
 	'''
 	# Instantiate the model in memory
 	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
-	user = UserModel(key=ndb.Key(UserModel, user_cred['sub']), name=user_cred.get('name', ""), email=user_cred.get('email'))
+	user = User(key=ndb.Key(User, user_cred['sub']), email=user_cred.get('email'))
 
 	# Add the model to the datastore
 	user_key = user.put()
@@ -27,9 +28,9 @@ def read_user(user_cred):
 		Parameters:
 			- user_cred: A set of firebase user credentials.
 
-		Returns: A UserModel entity.
+		Returns: A User entity.
 	'''
-	user_key = ndb.Key(UserModel, user_cred['sub'])
+	user_key = ndb.Key(User, user_cred['sub'])
 	user_entity = user_key.get()
 
 	if not user_entity:
@@ -37,3 +38,15 @@ def read_user(user_cred):
 		user_entity = user_key.get()
 
 	return user_entity
+
+def get_user_by_display_name(display_name):
+	results = User.query(User.display_name == display_name)
+	results = results.fetch()
+
+	if len(results) == 0:
+		return None
+
+	if len(results) > 1:
+		logger.warn("More than one user with display name: {}".format(display_name))
+
+	return results[0]

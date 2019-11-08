@@ -21,8 +21,12 @@ def authenticate_token(request):
 	id_token = request.headers.get('Authorization', "").split(' ').pop()
 	
 	# Handle case with no authorization
-	user_cred = google.oauth2.id_token.verify_firebase_token(
-		id_token, HTTP_REQUEST)
+	try:
+		user_cred = google.oauth2.id_token.verify_firebase_token(
+			id_token, HTTP_REQUEST)
+	except:
+		logger.warn("User Authentication Failed")
+		return None
 	
 	if not user_cred:
 		logger.warn("User Authentication Failed")
