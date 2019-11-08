@@ -29,7 +29,7 @@ class Tournament(ndb.Model):
 
 	# If the user doesn't set this, it should be generated
 	start_date_time = ndb.DateTimeProperty(required=True)
-	# CONTINUE HERE
+	
 	# Useful for sorting
 	created_date = ndb.DateTimeProperty()
 	last_modified = ndb.DateTimeProperty(auto_now_add=True)

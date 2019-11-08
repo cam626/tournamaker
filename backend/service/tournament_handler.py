@@ -59,17 +59,14 @@ def tournament_endpoints(app):
 			return jsonify({"error": "Tournament name already taken"}), 400
 
 		# Determine the create date for the object (now)
-		print("Getting timestamp")
 		time_stamp = datetime.now()
 		json_body["created_date"] = time_stamp
 
 		# Prevent the user from setting protected fields
-		print("Removed protected fields")
 		not_allowed = ["created_date", "last_modified", "teams"]
 		for key in not_allowed:
 			json_body.pop(key, None)
 
-		print("Validating fields")
 		# Validate each field
 		if json_body.get("game_type", "") == "":
 			return jsonify({"error": "The field 'game_type' must be provided"}), 400
@@ -89,6 +86,36 @@ def tournament_endpoints(app):
 			except:
 				json_body["start_date_time"] = time_stamp + timedelta(minutes = 30)
 
+		if json_body["start_date_time"] < time_stamp:
+			return jsonify({"error": "The tournament start date cannot be before the current datetime"}), 400
+
+		if "end_date_time" in json_body:
+			try:
+				json_body["end_date_time"] = datetime.strptime(json_body["end_date_time"], "%m/%d/%Y %H:%M:%S")
+			except:
+				json_body["end_date_time"] = None
+
+		if json_body["end_date_time"] < json_body["start_date_time"]:
+			return jsonify({"error": "The end date of the tournament can not be before the start date"}), 400
+
+		if "registration_open_date_time" in json_body:
+			try:
+				json_body["registration_open_date_time"] = datetime.strptime(json_body["registration_open_date_time"], "%m/%d/%Y %H:%M:%S")
+			except:
+				json_body["registration_open_date_time"] = time_stamp
+		else:
+			json_body["registration_open_date_time"] = time_stamp
+
+		if "registration_close_date_time" in json_body:
+			try:
+				json_body["registration_close_date_time"] = datetime.strptime(json_body["registration_close_date_time"], "%m/%d/%Y %H:%M:%S")
+			except:
+				json_body["registration_close_date_time"] = None
+
+		if structure == "n_elimination":
+			if "elimination_number" not in json_body:
+				return jsonify({"error": "The field 'elimination_number' is required with the 'n_elimination' tournament structure"}), 400
+
 		# Create a tournament from the request body
 		tournament_key = tournament_lib.create_tournament(user_cred, **json_body)
 
@@ -97,7 +124,7 @@ def tournament_endpoints(app):
 		user_entity.tournaments.append(tournament_key.urlsafe())
 		user_entity.put()
 
-		return jsonify({"tournament_key": tournament_key.urlsafe()})
+		return jsonify({"tournament_key": tournament_key.urlsafe()}), 200
 
 	@app.route('/tournament/<display_name>/<tournament_name>', methods=['GET'])
 	def get_tournament(display_name, tournament_name):
