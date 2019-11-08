@@ -2,23 +2,18 @@
 from lib.auth_lib import authenticate_token
 from lib import tournament_lib, user_lib
 from google.appengine.ext import ndb
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import jsonify, request
 import logging as logger
+
+tournament_structures = ["round_robin", "n-elimination", "swiss", "custom"]
 
 def tournament_endpoints(app):
 	@app.route('/tournament', methods=['POST'])
 	def create_tournament():
 		'''
 			This endpoint is meant for creating a tournament entity in the datastore.
-
-			This data entity represents a single tournament. The tournament can be a 
-			separate entity or it can be part of a league. If a tournament is in a league, 
-			the user must register for the league before signing up for the tournament. 
-			A tournament belongs to the user that created it and can be public or private. 
-			Public tournaments can be searched, but private tournaments can only be signed 
-			up for by invite link or by inputting the ID of the tournament.
 
 			Required fields
 			name: Any non-empty string that does not have leading or trailing whitespace.
@@ -31,39 +26,70 @@ def tournament_endpoints(app):
 			n_elimination, etc. Based on the option chosen here, other fields must also be defined. 
 			For example, if n_elimination is chosen, the elimination_number field must also be provided.
 
-			start_date: The date that the tournament is set to begin. Single day tournaments will just set this to be the date that the tournament is being held on.
+			start_date_time: The date that the tournament is set to begin. Single day tournaments will just 
+			set this to be the date that the tournament is being held on.
 			
 			Autofilled Fields:
+			last_modified
 			created_date
 
-			Optional fields
+			Optional fields:
 			elimination_number
-			start_time
-			end_time
-			end_date
-			registration_open_date
-			registration_close_date
+			end_date_time
+			registration_open_date - automatically set to now if not supplied
+			registration_close_date - automatically set to tournament start if not supplied
 		'''
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
-		json_body = request.get_json()
 
 		# Reject the request if the token was invalid
 		if user_cred == None:
-			return "Unauthorized", 401
+			return jsonify({"error": "Unauthorized"}), 401
+
+		# Contains the parameters to create the tournament with
+		json_body = request.get_json()
 
 		# Check if there is already a tournament with this name
 		name = json_body.get("name")
-		if not name:
-			return "The field 'name' must be provided", 400
+		if not name or name == "":
+			return jsonify({"error": "The field 'name' must be provided"}), 400
 		
 		entity = tournament_lib.read_tournament(user_cred, name)
 		if entity is not None:
-			return "Tournament name in use", 400
+			return jsonify({"error": "Tournament name already taken"}), 400
 
-		# Create a tournament from the request body
+		# Determine the create date for the object (now)
+		print("Getting timestamp")
 		time_stamp = datetime.now()
 		json_body["created_date"] = time_stamp
+
+		# Prevent the user from setting protected fields
+		print("Removed protected fields")
+		not_allowed = ["created_date", "last_modified", "teams"]
+		for key in not_allowed:
+			json_body.pop(key, None)
+
+		print("Validating fields")
+		# Validate each field
+		if json_body.get("game_type", "") == "":
+			return jsonify({"error": "The field 'game_type' must be provided"}), 400
+
+		structure = json_body.get("tournament_structure")
+		if not structure:
+			return jsonify({"error": "The field 'tournament_structure' must be provided"}), 400
+		
+		if structure not in tournament_structures:
+			return jsonify({"error": "The tournament structure {} is not allowed".format(structure)}), 400
+
+		if "start_date_time" not in json_body:
+			json_body["start_date_time"] = time_stamp + timedelta(minutes = 30)
+		else:
+			try:
+				json_body["start_date_time"] = datetime.strptime(json_body["start_date_time"], "%m/%d/%Y %H:%M:%S")
+			except:
+				json_body["start_date_time"] = time_stamp + timedelta(minutes = 30)
+
+		# Create a tournament from the request body
 		tournament_key = tournament_lib.create_tournament(user_cred, **json_body)
 
 		# Now we need to add the tournament key to the list of tournaments on the user
