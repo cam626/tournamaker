@@ -1,6 +1,7 @@
 
 from lib.auth_lib import authenticate_token
 from lib import tournament_lib, user_lib
+from google.appengine.ext import ndb
 from datetime import datetime
 
 from flask import jsonify, request
@@ -71,3 +72,82 @@ def tournament_endpoints(app):
 		user_entity.put()
 
 		return jsonify({"tournament_key": tournament_key.urlsafe()})
+
+	@app.route('/tournament/<display_name>/<tournament_name>', methods=['GET'])
+	def get_tournament(display_name, tournament_name):
+		user_cred = authenticate_token(request)
+		
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return "Unauthorized", 401
+
+		tournament_entity = tournament_lib.read_tournament_from_display_name(display_name, tournament_name)
+
+		if not tournament_entity:
+			return "Tournament not found", 404
+		return jsonify(tournament_entity.to_dict()), 200
+
+	@app.route('/tournament/<tournament_key>/signup/<team_key>', methods=['POST'])
+	def signup_team_for_tournament(tournament_key, team_key):
+		user_cred = authenticate_token(request)
+		
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return "Unauthorized", 401
+
+		try:
+			tournament_key = ndb.Key(urlsafe=tournament_key)
+		except:
+			return "Invalid tournament key", 404
+
+		try:
+			team_key = ndb.Key(urlsafe=team_key)
+		except:
+			return "Invalid team key", 404
+
+		tournament_entity = tournament_key.get()
+		team_entity = team_key.get()
+
+		tournament_entity.teams.append(team_key.urlsafe())
+		team_entity.events.append(tournament_key.urlsafe())
+
+		tournament_entity.put()
+		team_entity.put()
+
+		return "Success", 200
+
+	@app.route('/tournament/<tournament_key>/leave/<team_key>', methods=['POST'])
+	def remove_team_from_tournament(tournament_key, team_key):
+		user_cred = authenticate_token(request)
+		
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return "Unauthorized", 401
+
+		try:
+			tournament_key = ndb.Key(urlsafe=tournament_key)
+		except:
+			return "Invalid tournament key", 404
+
+		try:
+			team_key = ndb.Key(urlsafe=team_key)
+		except:
+			return "Invalid team key", 404
+
+		tournament_entity = tournament_key.get()
+		team_entity = team_key.get()
+
+		if team_key.urlsafe() in tournament_entity.teams:
+			tournament_entity.teams.remove(team_key.urlsafe())
+		else:
+			return "Team not in tournament", 400
+			
+		if tournament_key.urlsafe() in team_entity.events:
+			team_entity.events.remove(tournament_key.urlsafe())
+		else:
+			return "Tournament not in team events list", 400
+
+		tournament_entity.put()
+		team_entity.put()
+
+		return "Success", 200

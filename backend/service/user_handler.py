@@ -1,7 +1,6 @@
 
 from lib.auth_lib import authenticate_token
 from lib import user_lib
-from lib.models.error_models import UnauthorizedResponse
 
 from flask import jsonify, request
 import logging as logger
@@ -16,8 +15,8 @@ def user_endpoints(app):
 		user_cred = authenticate_token(request)
 		
 		if user_cred == None:
-			response = jsonify(UnauthorizedResponse().to_dict())
-			return response, response.status
+			response = jsonify({"error": "Unauthorized", "status": 401})
+			return response, 401
 
 		# Get a user object for the credentials
 		user_entity = user_lib.read_user(user_cred)

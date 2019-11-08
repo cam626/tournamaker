@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 from models.models import Tournament, User
+from . import user_lib
 
 def key_from_name(user_cred, name):
 	return ndb.Key(Tournament, name, parent=ndb.Key(User, user_cred['sub']))
@@ -26,14 +27,27 @@ def create_tournament(user_cred, **kwargs):
 
 	return tournament_key
 
-def read_tournament(user_cred, name):
+def read_tournament(user_cred, tournament_name):
 	'''
 		Attempt to read a tournament from a user based on the user credentials
 		and the name of the tournament.
 
 		Returns: A tournament entity or None if the tournament does not exist.
 	'''
-	tournament_key = key_from_name(user_cred, name)
+	tournament_key = key_from_name(user_cred, tournament_name)
 	entity = tournament_key.get()
 
 	return entity
+
+def read_tournament_from_display_name(display_name, tournament_name):
+	try:
+		user_key = user_lib.get_user_by_display_name(display_name).key
+	except:
+		return None
+
+	try:
+		tournament_key = ndb.Key(Tournament, tournament_name, parent=user_key)
+	except:
+		return None
+
+	return tournament_key.get()

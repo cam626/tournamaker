@@ -24,14 +24,14 @@ def create_team(**kwargs):
 
 	return team_key
 
-def read_team(team):
+def read_team(name):
 	'''
 		Attempt to read a team from a user based on the user credentials
 		and the name of the team.
 
 		Returns: A team entity or None if the team does not exist.
 	'''
-	team_key = key_from_name(kwargs["name"])
+	team_key = key_from_name(name)
 	entity = team_key.get()
 
 	return entity

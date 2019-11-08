@@ -6,6 +6,8 @@ class User(ndb.Model):
 	last_modified = ndb.DateTimeProperty(auto_now_add=True)
 
 	tournaments = ndb.StringProperty(repeated=True)
+	team_invites = ndb.StringProperty(repeated=True)
+	teams = ndb.StringProperty(repeated=True)
 
 class Tournament(ndb.Model):
 	name = ndb.StringProperty(required=True)
@@ -15,6 +17,7 @@ class Tournament(ndb.Model):
 	created_date = ndb.DateTimeProperty()
 	last_modified = ndb.DateTimeProperty(auto_now_add=True)
 
+	teams = ndb.StringProperty(repeated=True)
 	description = ndb.TextProperty()
 	elimination_number = ndb.IntegerProperty()
 	start_date_time = ndb.DateTimeProperty()
