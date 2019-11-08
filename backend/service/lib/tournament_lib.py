@@ -26,14 +26,14 @@ def create_tournament(user_cred, **kwargs):
 
 	return tournament_key
 
-def read_tournament(user_cred, tournament):
+def read_tournament(user_cred, name):
 	'''
 		Attempt to read a tournament from a user based on the user credentials
 		and the name of the tournament.
 
 		Returns: A tournament entity or None if the tournament does not exist.
 	'''
-	tournament_key = key_from_name(user_cred, kwargs["name"])
+	tournament_key = key_from_name(user_cred, name)
 	entity = tournament_key.get()
 
 	return entity

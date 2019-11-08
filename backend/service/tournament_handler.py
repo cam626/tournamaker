@@ -53,6 +53,8 @@ def tournament_endpoints(app):
 
 		# Check if there is already a tournament with this name
 		name = json_body.get("name")
+		if not name:
+			return "The field 'name' must be provided", 400
 		
 		entity = tournament_lib.read_tournament(user_cred, name)
 		if entity is not None:
@@ -65,9 +67,6 @@ def tournament_endpoints(app):
 
 		# Now we need to add the tournament key to the list of tournaments on the user
 		user_entity = user_lib.read_user(user_cred)
-		if not isinstance(user_entity.tournaments, list):
-			user_entity.tournaments = []
-
 		user_entity.tournaments.append(tournament_key.urlsafe())
 		user_entity.put()
 
