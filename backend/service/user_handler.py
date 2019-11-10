@@ -1,6 +1,7 @@
 
 from lib.auth_lib import authenticate_token
 from lib import user_lib
+from lib.models.models import User
 
 from flask import jsonify, request
 import logging as logger
@@ -59,6 +60,12 @@ def user_endpoints(app):
 		# Check special case updates (display_name must be unique)
 		if "display_name" in updates and user_lib.get_user_by_display_name(updates["display_name"]) != None:
 			return jsonify({"error": "Display name already in use"}), 400
+
+		# Remove updates that dont match the Model
+		keys = updates.keys()
+		for update_key in keys:
+			if update_key not in User._properties:
+				updates.pop(update_key, None)
 
 		# Apply the updates
 		user_entity.populate(**updates)

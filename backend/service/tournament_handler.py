@@ -58,14 +58,14 @@ def tournament_endpoints(app):
 		if entity is not None:
 			return jsonify({"error": "Tournament name already taken"}), 400
 
-		# Determine the create date for the object (now)
-		time_stamp = datetime.now()
-		json_body["created_date"] = time_stamp
-
 		# Prevent the user from setting protected fields
 		not_allowed = ["created_date", "last_modified", "teams"]
 		for key in not_allowed:
 			json_body.pop(key, None)
+
+		# Determine the create date for the object (now)
+		time_stamp = datetime.now()
+		json_body["created_date"] = time_stamp
 
 		# Validate each field
 		if json_body.get("game_type", "") == "":
@@ -95,8 +95,8 @@ def tournament_endpoints(app):
 			except:
 				json_body["end_date_time"] = None
 
-		if json_body["end_date_time"] < json_body["start_date_time"]:
-			return jsonify({"error": "The end date of the tournament can not be before the start date"}), 400
+			if json_body["end_date_time"] < json_body["start_date_time"]:
+				return jsonify({"error": "The end date of the tournament can not be before the start date"}), 400
 
 		if "registration_open_date_time" in json_body:
 			try:
@@ -127,18 +127,47 @@ def tournament_endpoints(app):
 		return jsonify({"tournament_key": tournament_key.urlsafe()}), 200
 
 	@app.route('/tournament/<display_name>/<tournament_name>', methods=['GET'])
-	def get_tournament(display_name, tournament_name):
+	def search_for_tournament(display_name, tournament_name):
 		user_cred = authenticate_token(request)
 		
 		# Reject the request if the token was invalid
 		if user_cred == None:
-			return "Unauthorized", 401
+			return jsonify({"error": "Unauthorized"}), 401
 
 		tournament_entity = tournament_lib.read_tournament_from_display_name(display_name, tournament_name)
 
 		if not tournament_entity:
-			return "Tournament not found", 404
+			return jsonify({"error": "Tournament not found"}), 404
 		return jsonify(tournament_entity.to_dict()), 200
+
+	@app.route('/tournament/<tournament_key>', methods=['GET'])
+	def read_tournament(tournament_key):
+		user_cred = authenticate_token(request)
+		
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+
+		try:
+			tournament_key = ndb.Key(urlsafe=tournament_key)
+		except:
+			return jsonify({"error": "Invalid tournament key"})
+
+		tournament_entity = tournament_key.get()
+		if not tournament_entity:
+			return jsonify({"error": "Invalid tournament key"})
+
+		user_entity = user_lib.read_user(user_cred)
+		if user_entity.key.urlsafe() == tournament_entity.owner:
+			return jsonify(tournament_entity.to_dict()), 200
+
+		team_keys = user_entity.teams
+		for team_key in team_keys:
+			if team_key in tournament_entity.teams:
+				return jsonify(tournament_entity.to_dict()), 200
+
+		return jsonify({"error": "You do not have access to this tournament"}), 401
+
 
 	@app.route('/tournament/<tournament_key>/signup/<team_key>', methods=['POST'])
 	def signup_team_for_tournament(tournament_key, team_key):
@@ -146,17 +175,17 @@ def tournament_endpoints(app):
 		
 		# Reject the request if the token was invalid
 		if user_cred == None:
-			return "Unauthorized", 401
+			return jsonify({"error": "Unauthorized"}), 401
 
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
-			return "Invalid tournament key", 404
+			return jsonify({"error": "Invalid tournament key"}), 404
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
-			return "Invalid team key", 404
+			return jsonify({"error": "Invalid team key"}), 404
 
 		tournament_entity = tournament_key.get()
 		team_entity = team_key.get()
@@ -175,17 +204,17 @@ def tournament_endpoints(app):
 		
 		# Reject the request if the token was invalid
 		if user_cred == None:
-			return "Unauthorized", 401
+			return jsonify({"error": "Unauthorized"}), 401
 
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
-			return "Invalid tournament key", 404
+			return jsonify({"error": "Invalid tournament key"}), 404
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
-			return "Invalid team key", 404
+			return jsonify({"error": "Invalid team key"}), 404
 
 		tournament_entity = tournament_key.get()
 		team_entity = team_key.get()
@@ -193,12 +222,12 @@ def tournament_endpoints(app):
 		if team_key.urlsafe() in tournament_entity.teams:
 			tournament_entity.teams.remove(team_key.urlsafe())
 		else:
-			return "Team not in tournament", 400
+			return jsonify({"error": "Team not in tournament"}), 400
 			
 		if tournament_key.urlsafe() in team_entity.events:
 			team_entity.events.remove(tournament_key.urlsafe())
 		else:
-			return "Tournament not in team events list", 400
+			return jsonify({"error": "Tournament not in team events list"}), 400
 
 		tournament_entity.put()
 		team_entity.put()

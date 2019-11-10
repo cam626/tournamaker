@@ -18,6 +18,8 @@ class User(ndb.Model):
 	teams = ndb.StringProperty(repeated=True)
 
 class Tournament(ndb.Model):
+	owner = ndb.StringProperty(required=True)
+
 	# Unique under creator
 	name = ndb.StringProperty(required=True)
 
@@ -36,6 +38,7 @@ class Tournament(ndb.Model):
 
 	# Starts empty
 	teams = ndb.StringProperty(repeated=True)
+
 	description = ndb.TextProperty()
 
 	# Tournaments can go for unlimited time
