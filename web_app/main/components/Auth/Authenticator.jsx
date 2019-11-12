@@ -1,7 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import firebase from 'firebase';
-import { setAuthToken, setAuthTokenCookie, setAuthTokenFromCookie, deleteAuthTokenCookie, isLoggedIn } from '../../api/authToken';
+import { setAuthToken, setAuthTokenCookie, setAuthTokenFromCookie, 
+	deleteAuthTokenCookie, isLoggedIn } from '../../api/authToken';
 
 class Authenticator extends React.Component {
  	constructor(props) {
