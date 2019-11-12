@@ -2,9 +2,10 @@ import React from 'react';
 import { Container, Row, Label, Button, Input, 
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
 import { getDisplayName, updateDisplayName } from '../../api/displayName';
+import requireAuth from '../../tools/requireAuth';
 import fireabse from 'firebase';
 
-export default class Header extends React.Component {
+class DisplayName extends React.Component {
  	constructor(props) {
    		super(props);
 
@@ -85,3 +86,5 @@ export default class Header extends React.Component {
 		);
 	}
 }
+
+export default requireAuth(DisplayName);

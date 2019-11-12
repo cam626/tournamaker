@@ -3,7 +3,6 @@ import { Container, Row } from 'reactstrap';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
-import Global from '../../variables';
 import { getDisplayName } from '../../api/displayName';
 import { setAuthToken, setAuthTokenCookie } from '../../api/authToken';
 
@@ -30,19 +29,20 @@ const uiConfig = {
 export default class SignIn extends React.Component {
 	componentDidMount() {
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-			(user) => {
-				if (user) {
-					setAuthToken().then(() => {
-						setAuthTokenCookie();
-						getDisplayName().then((displayname) => {
-							displayname ? this.props.history.push('/user')
-							: this.props.history.push('/user/displayname');
-						});
+			(user) => { 
+				if (user) setAuthToken().then(() => {
+					setAuthTokenCookie();
+					getDisplayName().then((displayname) => {
+    					displayname ? this.props.history.push('/user')
+						: this.props.history.push('/user/displayname');
 					});
-				}
+				});
 			}
     	);
+
   	}
+
+  	componentWillUnmount() { this.unregisterAuthObserver(); }
 
 	render() {
 		return (
