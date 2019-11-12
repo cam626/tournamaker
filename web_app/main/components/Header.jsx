@@ -1,43 +1,16 @@
 import React from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { NavLink as RRNavLink, withRouter } from 'react-router-dom';
-import firebase from 'firebase';
-import { setAuthToken, setAuthTokenCookie, setAuthTokenFromCookie, deleteAuthTokenCookie, isLoggedIn } from '../api/authToken';
 
 class Header extends React.Component {
  	constructor(props) {
    		super(props);
-
-   		this.signOut = this.signOut.bind(this);
+   		
 	   	this.toggle = this.toggle.bind(this);
-	   	this.state = {
-	   		isOpen: false,
-	   		loggedIn: false
-	   	};
+	   	this.state = { isOpen: false };
 	}
 
 	toggle() { this.setState({ isOpen: !this.state.isOpen }); }
-
-  	signOut(e) {
-  		e.preventDefault();
-  		firebase.auth().signOut().then(() => {
-  			deleteAuthTokenCookie();
-  			this.setState({ loggedIn: false });
-  			this.props.history.push('/');
-  		});
-  	}
-
-	componentDidMount() {
-    	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-			(user) => { 
-				user && setAuthToken();
-				user && setAuthTokenCookie();
-				this.setState({ loggedIn: !!user }); 
-			}
-    	);
-    	setAuthTokenFromCookie();
-    	this.setState({ loggedIn: isLoggedIn() });
-  	}
 
 	render() {
 		return (
@@ -51,10 +24,10 @@ class Header extends React.Component {
 						</NavItem>
 						<NavItem>
 							{
-								this.state.loggedIn ?
+								this.props.isLoggedIn ?
 								<div>
 									<NavLink to='/user' tag={RRNavLink}>User</NavLink>
-									<NavLink onClick={this.signOut}>Log Out</NavLink>
+									<NavLink onClick={this.props.signOut}>Log Out</NavLink>
 								</div>
 								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
 							}

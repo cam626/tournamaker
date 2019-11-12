@@ -1,10 +1,11 @@
 import React from 'react';
 import { Container, Row, Button } from 'reactstrap';
 import { getDisplayName } from '../../api/displayName';
+import requireAuth from '../../tools/requireAuth';
 
-export default class User extends React.Component {
+class User extends React.Component {
  	constructor(props) {
-   		super(props);
+ 		super(props);
 
    		this.toDisplayName = this.toDisplayName.bind(this);
 	   	this.state = { displayName: '' };
@@ -31,3 +32,5 @@ export default class User extends React.Component {
 		);
 	}
 }
+
+export default requireAuth(User);
