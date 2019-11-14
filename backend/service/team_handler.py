@@ -58,7 +58,7 @@ def team_endpoints(app):
 
 		return jsonify({"team_key": team_key.urlsafe()})
 
-	@app.route('/team/<team_key>')
+	@app.route('/team/<team_key>', methods=['GET'])
 	def read_team(team_key):
 		try:
 			team_key = ndb.Key(urlsafe=team_key)

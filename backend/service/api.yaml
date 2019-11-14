@@ -5,8 +5,9 @@ info:
   version: "1.0"
 servers:
 - url: https://tournamaker.appspot.com
-  description: Frontend server.
+  description: Frontend server
 - url: https://backend-dot-tournamaker.appspot.com
+  description: Backend server
 paths:
   /user:
     get:
@@ -69,6 +70,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
     patch:
       description: Update the user object of the logged in user
       tags: 
@@ -111,6 +113,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  
   /tournament:
     post:
       description: Create a new tournament object
@@ -183,6 +186,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  
   /tournament/<display_name>/<tournament_name>:
     get:
       description: Search for a tournament
@@ -228,17 +232,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  
   /tournament/<tournament_key>:
     get:
       description: Read a tournament by key
       tags:
       - tournament
       parameters:
-        - name: tournament_key
-          in: path
-          schema:
-            type: string
-          required: true
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: tournament_key
+        in: path
+        schema:
+          type: string
+        required: true
           
       responses:
       
@@ -269,16 +279,21 @@ paths:
       tags:
       - tournament
       parameters:
-        - name: tournament_key
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: team_key
-          in: path
-          schema:
-            type: string
-          required: true
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: tournament_key
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
           
       responses:
       
@@ -310,16 +325,21 @@ paths:
       tags:
       - tournament
       parameters:
-        - name: tournament_key
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: team_key
-          in: path
-          schema:
-            type: string
-          required: true
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: tournament_key
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
           
       responses:
       
@@ -344,6 +364,226 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+      
+  /team:
+    post:
+      description: Create a new team
+    
+      tags:
+      - team
+      
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The name of the new team
+                  type: string
+      
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+                
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+        400:
+          description: Invalid or missing data in request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /team/<team_key>:
+    get:
+      description: Read a team by key
+      tags:
+      - team
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /team/<team_key>/invite/<user_key>:
+    post:
+      description: Invite a user to join this team
+      tags:
+      - team
+      
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: user_key
+        in: path
+        schema:
+          type: string
+        required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      
+  /user/<team_key>/accept:
+    patch:
+      description: Accept an invite to a team
+      tags:
+      - user
+      
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      
+  /user/<team_key>/decline:
+    delete:
+      description: Decline an invite to a team
+      tags:
+      - user
+      
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: team_key
+        in: path
+        schema:
+          type: string
+        required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      
       
 components:
   schemas:
@@ -403,3 +643,23 @@ components:
         error:
           type: string
           description: The error that occured
+    Team:
+      properties:
+        name:
+          type: string
+          description: The name of the team
+        members:
+          type: array
+          description: A list of members on the team
+          items:
+            type: string
+        events:
+          type: array
+          description: A list of events that the team is registered for
+          items:
+            type: string
+        invited_members:
+          type: array
+          description: A list of members that currently have an active invite to this team
+          items:
+            type: string
