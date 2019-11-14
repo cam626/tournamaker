@@ -41,6 +41,12 @@ def read_user(user_cred):
 	return user_entity
 
 def get_user_by_display_name(display_name):
+	'''
+		Seach for a user based on their display_name.
+
+		If a user is found, the user entity is returned. Otherwise
+		None is returned.
+	'''
 	results = User.query(User.display_name == display_name)
 	results = results.fetch()
 
