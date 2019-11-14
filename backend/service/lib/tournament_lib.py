@@ -19,6 +19,10 @@ def create_tournament(user_cred, **kwargs):
 	'''
 	# Instantiate the model in memory
 	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
+	
+	user_entity = user_lib.read_user(user_cred)
+	kwargs["owner"] = user_entity.key.urlsafe()
+
 	tournament_key = key_from_name(user_cred, kwargs["name"])
 	tournament = Tournament(key=tournament_key, **kwargs)
 

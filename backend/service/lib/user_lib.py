@@ -30,6 +30,7 @@ def read_user(user_cred):
 
 		Returns: A User entity.
 	'''
+	# Firebase will make sure that 'sub' is unique
 	user_key = ndb.Key(User, user_cred['sub'])
 	user_entity = user_key.get()
 
