@@ -151,11 +151,11 @@ def tournament_endpoints(app):
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
-			return jsonify({"error": "Invalid tournament key"})
+			return jsonify({"error": "Invalid tournament key"}), 400
 
 		tournament_entity = tournament_key.get()
 		if not tournament_entity:
-			return jsonify({"error": "Invalid tournament key"})
+			return jsonify({"error": "Invalid tournament key"}), 400
 
 		user_entity = user_lib.read_user(user_cred)
 		if user_entity.key.urlsafe() == tournament_entity.owner:
@@ -198,7 +198,7 @@ def tournament_endpoints(app):
 
 		return "Success", 200
 
-	@app.route('/tournament/<tournament_key>/leave/<team_key>', methods=['POST'])
+	@app.route('/tournament/<tournament_key>/leave/<team_key>', methods=['DELETE'])
 	def remove_team_from_tournament(tournament_key, team_key):
 		user_cred = authenticate_token(request)
 		

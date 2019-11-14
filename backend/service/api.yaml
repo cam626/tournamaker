@@ -61,24 +61,14 @@ paths:
           content:
             application/json:
               schema:
-                title: Error
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error that occured
+                $ref: "#/components/schemas/Error"
                     
         500:
           description: Error Reading User
           content:
             application/json:
               schema:
-                title: Error
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error that occured
+                $ref: "#/components/schemas/Error"
     patch:
       description: Update the user object of the logged in user
       tags: 
@@ -113,24 +103,14 @@ paths:
           content:
             application/json:
               schema:
-                title: Error
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error that occured
+                $ref: "#/components/schemas/Error"
                     
         400:
           description: No update fields provided or display name in use
           content:
             application/json:
               schema:
-                title: Error
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error that occured
+                $ref: "#/components/schemas/Error"
   /tournament:
     post:
       description: Create a new tournament object
@@ -173,6 +153,9 @@ paths:
                 registration_close_date_time:
                   type: string
                   description: The date time that the registration for this tournament closes
+                elimination_number:
+                  type: number
+                  description: The number of rounds that it takes for a player to be eliminated in n_elimination
               required:
                 - name
                 - game_type
@@ -185,3 +168,238 @@ paths:
             text/plain:
               schema:
                 type: string
+                example: Success
+                    
+        401:
+          description: No authorization token given
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                    
+        400:
+          description: Invalid or missing data in request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tournament/<display_name>/<tournament_name>:
+    get:
+      description: Search for a tournament
+      tags: 
+        - tournament
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      - name: display_name
+        description: The display name of the user who created the tournament
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: tournament_name
+        description: The name of the tournament
+        in: path
+        schema:
+          type: string
+        required: true
+                  
+      responses:
+        200:
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+                
+        401:
+          description: No authorization token given
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                    
+        404:
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tournament/<tournament_key>:
+    get:
+      description: Read a tournament by key
+      tags:
+      - tournament
+      parameters:
+        - name: tournament_key
+          in: path
+          schema:
+            type: string
+          required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        400:
+          description: Invalid tournament key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /tournament/<tournament_key>/signup/<team_key>:
+    post:
+      description: Sign a team up for a tournament
+      tags:
+      - tournament
+      parameters:
+        - name: tournament_key
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: team_key
+          in: path
+          schema:
+            type: string
+          required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Invalid team or tournament key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /tournament/<tournament_key>/leave/<team_key>:
+    delete:
+      description: Remove a team from a tournament
+      tags:
+      - tournament
+      parameters:
+        - name: tournament_key
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: team_key
+          in: path
+          schema:
+            type: string
+          required: true
+          
+      responses:
+      
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Success
+        
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Invalid team or tournament key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      
+components:
+  schemas:
+    Tournament:
+      properties:
+        owner:
+          type: string
+          description: The owner of the tournament
+        name:
+          type: string
+          description: The name of the tournament
+          example: Tournament Name
+        created_date:
+          type: string
+          description: The date time that the tournament was created
+          example: "HH/MM/YYYY HH:MM:SS"
+        last_modified:
+          type: string
+          description: The date time that the tournament was last modified
+          example: "HH/MM/YYYY HH:MM:SS"
+        description:
+          type: string
+          description: A description of the tournament
+        start_date_time:
+          type: string
+          description: The date time that the tournament starts
+          example: "HH/MM/YYYY HH:MM:SS"
+        end_date_time:
+          type: string
+          description: The date time that the tournament ends
+          example: "HH/MM/YYYY HH:MM:SS"
+        registration_open_date_time:
+          type: string
+          description: The date time that registration for the tournament opens
+          example: "HH/MM/YYYY HH:MM:SS"
+        registration_close_date_time:
+          type: string
+          description: The date time that registration for the tournament closes
+          example: "HH/MM/YYYY HH:MM:SS"
+        game_type:
+          type: string
+          description: The game type of the new tournament
+        tournament_structure:
+          type: string
+          description: The structure of the tournament
+          example: swiss
+        elimination_number:
+          type: number
+          description: The number of rounds that it takes for a player to be eliminated in n_elimination
+        teams:
+          type: array
+          description: An array of team keys for the teams that are registered for the tournament
+          items:
+            type: string
+    Error:
+      properties:
+        error:
+          type: string
+          description: The error that occured
