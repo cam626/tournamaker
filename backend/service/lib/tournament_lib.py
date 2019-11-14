@@ -44,14 +44,26 @@ def read_tournament(user_cred, tournament_name):
 	return entity
 
 def read_tournament_from_display_name(display_name, tournament_name):
+	'''
+		Read a tournament given the display name of the owner and the
+		name of the tournament. 
+
+		This works because display names are unique and tournament names
+		are unique for each user.
+
+		Returns a tournament entity or None.
+	'''
+	# Get the user key
 	try:
 		user_key = user_lib.get_user_by_display_name(display_name).key
 	except:
 		return None
 
+	# Create the tournament key with the user key as a parent and tournament name
 	try:
 		tournament_key = ndb.Key(Tournament, tournament_name, parent=user_key)
 	except:
 		return None
 
+	# Return the entity
 	return tournament_key.get()

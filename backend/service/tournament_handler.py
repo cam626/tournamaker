@@ -128,6 +128,10 @@ def tournament_endpoints(app):
 
 	@app.route('/tournament/<display_name>/<tournament_name>', methods=['GET'])
 	def search_for_tournament(display_name, tournament_name):
+		'''
+			Find a tournament based on the display name of the owner and
+			the name of the tournament.
+		'''
 		user_cred = authenticate_token(request)
 		
 		# Reject the request if the token was invalid
@@ -138,39 +142,45 @@ def tournament_endpoints(app):
 
 		if not tournament_entity:
 			return jsonify({"error": "Tournament not found"}), 404
+
 		return jsonify(tournament_entity.to_dict()), 200
 
 	@app.route('/tournament/<tournament_key>', methods=['GET'])
 	def read_tournament(tournament_key):
+		'''
+			Read a tournament entity given the tournament key.
+
+			The user sending the request must be logged in, but does
+			not need to be a member of the tournament.
+		'''
 		user_cred = authenticate_token(request)
 		
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return jsonify({"error": "Unauthorized"}), 401
 
+		# Get the key object from the urlsafe key
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
 			return jsonify({"error": "Invalid tournament key"}), 400
 
+		# Get the tournament entity from the key
 		tournament_entity = tournament_key.get()
 		if not tournament_entity:
-			return jsonify({"error": "Invalid tournament key"}), 400
+			return jsonify({"error": "Tournament not found"}), 404
 
-		user_entity = user_lib.read_user(user_cred)
-		if user_entity.key.urlsafe() == tournament_entity.owner:
-			return jsonify(tournament_entity.to_dict()), 200
-
-		team_keys = user_entity.teams
-		for team_key in team_keys:
-			if team_key in tournament_entity.teams:
-				return jsonify(tournament_entity.to_dict()), 200
-
-		return jsonify({"error": "You do not have access to this tournament"}), 401
-
+		return jsonify(tournament_entity.to_dict()), 200
 
 	@app.route('/tournament/<tournament_key>/signup/<team_key>', methods=['POST'])
 	def signup_team_for_tournament(tournament_key, team_key):
+		'''
+			Sign a team up for a tournament.
+
+			The user sending the request must be a member of the team.
+
+			The team must not already be in the tournament.
+		'''
 		user_cred = authenticate_token(request)
 		
 		# Reject the request if the token was invalid
@@ -180,26 +190,46 @@ def tournament_endpoints(app):
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
-			return jsonify({"error": "Invalid tournament key"}), 404
+			return jsonify({"error": "Invalid tournament key"}), 400
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
-			return jsonify({"error": "Invalid team key"}), 404
+			return jsonify({"error": "Invalid team key"}), 400
 
 		tournament_entity = tournament_key.get()
 		team_entity = team_key.get()
 
-		tournament_entity.teams.append(team_key.urlsafe())
-		team_entity.events.append(tournament_key.urlsafe())
+		# Check that the user sending the request is on the team
+		user_entity = user_lib.read_user(user_cred)
+		if user_entity.key.urlsafe() not in team_entity.members:
+			return jsonify({"error": "You do not have access to this team"}), 401
 
+		# Check that the team is not already in the tournament
+		if team_key.urlsafe() in tournament_entity.teams:
+			return jsonify({"error": "Team already in tournament"}), 400
+
+		tournament_entity.teams.append(team_key.urlsafe())
 		tournament_entity.put()
+
+		# Check that the tournament is not in the team's events
+		if tournament_key.urlsafe() in team_entity.events:
+			return jsonify({"error": "Tournament already in team's events"}), 400
+
+		team_entity.events.append(tournament_key.urlsafe())
 		team_entity.put()
 
 		return "Success", 200
 
 	@app.route('/tournament/<tournament_key>/leave/<team_key>', methods=['DELETE'])
 	def remove_team_from_tournament(tournament_key, team_key):
+		'''
+			Remove a team from a tournament. 
+
+			The user sending the request must be a member of the team.
+
+			The team must be in the tournament.
+		'''
 		user_cred = authenticate_token(request)
 		
 		# Reject the request if the token was invalid
@@ -209,27 +239,33 @@ def tournament_endpoints(app):
 		try:
 			tournament_key = ndb.Key(urlsafe=tournament_key)
 		except:
-			return jsonify({"error": "Invalid tournament key"}), 404
+			return jsonify({"error": "Invalid tournament key"}), 400
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
-			return jsonify({"error": "Invalid team key"}), 404
+			return jsonify({"error": "Invalid team key"}), 400
 
 		tournament_entity = tournament_key.get()
 		team_entity = team_key.get()
 
+		# Check that the user sending the request is on the team
+		user_entity = user_lib.read_user(user_cred)
+		if user_entity.key.urlsafe() not in team_entity.members:
+			return jsonify({"error": "You do not have access to this team"}), 401
+
+		# Remove the team if it is on the tournament
 		if team_key.urlsafe() in tournament_entity.teams:
 			tournament_entity.teams.remove(team_key.urlsafe())
+			tournament_entity.put()
 		else:
 			return jsonify({"error": "Team not in tournament"}), 400
-			
+		
+		# Remove the tournament if it is in the team's events
 		if tournament_key.urlsafe() in team_entity.events:
 			team_entity.events.remove(tournament_key.urlsafe())
+			team_entity.put()
 		else:
 			return jsonify({"error": "Tournament not in team events list"}), 400
-
-		tournament_entity.put()
-		team_entity.put()
 
 		return "Success", 200
