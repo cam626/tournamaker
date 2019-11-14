@@ -434,6 +434,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        
+        404:
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
                 
   /tournament/<tournament_key>/signup/<team_key>:
     post:
@@ -474,7 +481,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         
-        404:
+        400:
           description: Invalid team or tournament key
           content:
             application/json:
@@ -520,7 +527,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         
-        404:
+        400:
           description: Invalid team or tournament key
           content:
             application/json:
