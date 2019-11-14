@@ -1,0 +1,187 @@
+openapi: 3.0.2
+info:
+  title: "TournaMaker"
+  description: "A tournament scheduling application for multiple types of tournaments."
+  version: "1.0"
+servers:
+- url: https://tournamaker.appspot.com
+  description: Frontend server.
+- url: https://backend-dot-tournamaker.appspot.com
+paths:
+  /user:
+    get:
+      description: Read the user object of the logged in user
+      tags: 
+        - user
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                title: User
+                type: object
+                properties:
+                  display_name:
+                    type: string
+                    description: The unique display name of the user
+                  email:
+                    type: string
+                    description: The unique email of the user
+                  last_modified:
+                    type: string
+                    description: The date time that the user was last modified
+                  create_date:
+                    type: string
+                    description: The date time that the user was created
+                  tournaments:
+                    type: array
+                    description: A list of tournament IDs for the tournaments that the user owns
+                    items:
+                      type: string
+                  teams:
+                    type: array
+                    description: A list of team IDs for the teams that the user is a member of
+                    items:
+                      type: string
+                  team_invites:
+                    type: array
+                    description: A list of team IDs for the teams that the user has been invited to
+                    items:
+                      type: string
+                    
+        401:
+          description: No authorization token given
+          content:
+            application/json:
+              schema:
+                title: Error
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error that occured
+                    
+        500:
+          description: Error Reading User
+          content:
+            application/json:
+              schema:
+                title: Error
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error that occured
+    patch:
+      description: Update the user object of the logged in user
+      tags: 
+        - user
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: The updates that should be applied to the user object
+              type: object
+              properties:
+                display_name:
+                  type: string
+                  description: The new display name for the user.
+                  
+      responses:
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+                    
+        401:
+          description: No authorization token given
+          content:
+            application/json:
+              schema:
+                title: Error
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error that occured
+                    
+        400:
+          description: No update fields provided or display name in use
+          content:
+            application/json:
+              schema:
+                title: Error
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error that occured
+  /tournament:
+    post:
+      description: Create a new tournament object
+      tags: 
+        - tournament
+      parameters:
+      - name: X-Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: The fields to create the tournament with
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the new tournament
+                game_type:
+                  type: string
+                  description: The game type of the new tournament
+                tournament_structure:
+                  type: string
+                  description: The structure of the new tournament (i.e. swiss)
+                description:
+                  type: string
+                  description: An optional description of this tournament
+                start_date_time:
+                  type: string
+                  description: The date time that the tournament should start
+                end_date_time:
+                  type: string
+                  description: The date time that the tournament should end
+                registration_open_date_time:
+                  type: string
+                  description: The date time that registration for this tournament opens
+                registration_close_date_time:
+                  type: string
+                  description: The date time that the registration for this tournament closes
+              required:
+                - name
+                - game_type
+                - tournament_structure
+                  
+      responses:
+        200:
+          description: A successful response
+          content:
+            text/plain:
+              schema:
+                type: string

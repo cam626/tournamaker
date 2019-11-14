@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from flask import jsonify, request
 import logging as logger
 
-tournament_structures = ["round_robin", "n-elimination", "swiss", "custom"]
+tournament_structures = ["round_robin", "n_elimination", "swiss", "custom"]
 
 def tournament_endpoints(app):
 	@app.route('/tournament', methods=['POST'])
