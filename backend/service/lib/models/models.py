@@ -52,6 +52,9 @@ class Tournament(ndb.Model):
 	# For n-elimination
 	elimination_number = ndb.IntegerProperty()
 
+	matches = ndb.StringProperty(repeated=True)
+	num_matches = ndb.ComputedProperty(lambda self: len(self.matches))
+
 class Team(ndb.Model):
 	# Unique globally
 	name = ndb.StringProperty(required=True)
@@ -64,4 +67,33 @@ class Team(ndb.Model):
 
 	# Member who have not yet accepted or declined
 	invited_members = ndb.StringProperty(repeated=True)
+
+class Match(ndb.Model):
+	'''
+		A match is the basic object of competition and is comprised of games.
+	'''
+
+	# Only 2 teams can compete in a match
+	team1 = ndb.StringProperty(required=True)
+	team2 = ndb.StringProperty(required=True)
+	
+	winner = ndb.StringProperty()
+	loser = ndb.StringProperty()
+
+	# The games that make up the match
+	games = ndb.StringProperty(repeated=True)
+
+	num_games = ndb.IntegerProperty(default=3)
+	games_played = ndb.IntegerProperty(default=0)
+
+	# A match can only lie in a single event (tournament or season)
+	event = ndb.StringProperty(required=True)
+
+class Game(ndb.Model):
+	team1_score = ndb.IntegerProperty(default=0)
+	team2_score = ndb.IntegerProperty(default=0)
+
+	winner = ndb.StringProperty()
+	loser = ndb.StringProperty()
+
 	

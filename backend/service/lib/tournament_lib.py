@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from models.models import Tournament, User
-from . import user_lib
+import user_lib
+import match_lib
 
 def key_from_name(user_cred, name):
 	return ndb.Key(Tournament, name, parent=ndb.Key(User, user_cred['sub']))
@@ -20,9 +21,6 @@ def create_tournament(user_cred, **kwargs):
 	# Instantiate the model in memory
 	# Setting up the key this way will ensure that this object belongs to this user ('sub' is unique)
 	
-	user_entity = user_lib.read_user(user_cred)
-	kwargs["owner"] = user_entity.key.urlsafe()
-
 	tournament_key = key_from_name(user_cred, kwargs["name"])
 	tournament = Tournament(key=tournament_key, **kwargs)
 
@@ -67,3 +65,14 @@ def read_tournament_from_display_name(display_name, tournament_name):
 
 	# Return the entity
 	return tournament_key.get()
+
+def add_match(tournament_key, **match_params):
+	'''
+		Add a single match to a tournament.
+	'''
+	match_key = match_lib.create_match(tournament_key, **match_params)
+	tournament_entity = tournament_key.get()
+	tournament_entity.matches.append(match_key.urlsafe())
+	tournament_entity.put()
+
+	return match_key
