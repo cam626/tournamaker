@@ -5,6 +5,7 @@ import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
 import { getDisplayName } from '../../api/displayName';
 import { setAuthToken, setAuthTokenCookie } from '../../api/authToken';
+import queryString from 'query-string';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -27,19 +28,29 @@ const uiConfig = {
 };
 
 export default class SignIn extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { redirect : '' };
+	}
+
 	componentDidMount() {
+    	const params = queryString.parse(this.props.location.search);
+  		let loggedInGoto = '/user';
+  		if (params && 'redirect' in params) {
+  			this.setState({ redirect : params.redirect });
+  			loggedInGoto = params.redirect;
+  		}
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
 			(user) => { 
 				if (user) setAuthToken().then(() => {
 					setAuthTokenCookie();
 					getDisplayName().then((displayname) => {
-    					displayname ? this.props.history.push('/user')
+    					displayname ? this.props.history.push(loggedInGoto)
 						: this.props.history.push('/user/displayname');
 					});
 				});
 			}
     	);
-
   	}
 
   	componentWillUnmount() { this.unregisterAuthObserver(); }
@@ -47,6 +58,12 @@ export default class SignIn extends React.Component {
 	render() {
 		return (
 			<Container>
+				{
+					this.state.redirect &&
+					<Row>
+						<h4>You cannot access the {this.state.redirect} page without logging in.</h4>
+					</Row>
+				}
 				<Row>
 					<h1>Sign in to Tournamaker</h1>
 				</Row>

@@ -66,7 +66,7 @@ class DisplayName extends React.Component {
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
 						<FormGroup>
-						<Label for="displayName">Display Name</Label>
+							<Label for="displayName">Display Name</Label>
 							<Input type='text' name='displayName' id='displayName' placeholder='Display Name'
 								onChange={this.handleNameChange} 
 								valid={this.state.valid == 1}
