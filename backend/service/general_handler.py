@@ -28,7 +28,7 @@ def general_endpoints(app):
 		password = body.get("password")
 		
 		if not email or not password:
-			return "Bad Request", 400
+			return jsonify({"error": "Please provide an email and password"}), 400
 
 		# Set up request to send to firebase
 		url = "{}?key={}".format(__FIREBASE_USER_VERIFY_SERVICE, CONSTANTS["API_KEY"])

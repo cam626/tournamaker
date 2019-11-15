@@ -35,6 +35,9 @@ def user_endpoints(app):
 			Endpoint to update an existing user. If the request includes 
 			fields that are not updatable, they will be removed from the
 			updates.
+
+			Currently the only updatable property is display_name. (All
+			other fields are protected)
 		'''
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
@@ -57,7 +60,7 @@ def user_endpoints(app):
 		for key in not_allowed:
 			updates.pop(key, None)
 
-		# Check special case updates (display_name must be unique)
+		# If the user is updating display_name, make sure it is not in use
 		if "display_name" in updates and user_lib.get_user_by_display_name(updates["display_name"]) != None:
 			return jsonify({"error": "Display name already in use"}), 400
 
@@ -71,6 +74,68 @@ def user_endpoints(app):
 		user_entity.populate(**updates)
 
 		# Store the changes
+		user_entity.put()
+
+		return "Success", 200
+
+	@app.route('/user/<team_key>/accept', methods=['PATCH'])
+	def accept_team_invite(team_key):
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+		user_entity = user_lib.read_user(user_cred)
+
+		try:
+			team_key = ndb.Key(urlsafe=team_key)
+		except:
+			return jsonify({"error": "Team not found"}), 404
+
+		team_entity = team_key.get()
+
+		if user_entity.key.urlsafe() not in team_entity.invited_members:
+			return jsonify({"error": "No active invite to given team"}), 400
+
+		# Move user from invited to member
+		team_entity.invited_members.remove(user_entity.key.urlsafe())
+		team_entity.members.append(user_entity.key.urlsafe())
+		team_entity.put()
+
+		# Move team from team invites to teams
+		user_entity.team_invites.remove(team_entity.key.urlsafe())
+		user_entity.teams.append(team_entity.key.urlsafe())
+		user_entity.put()
+
+		return "Success", 200
+
+	@app.route('/user/<team_key>/decline', methods=['DELETE'])
+	def decline_team_invite(team_key):
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+		user_entity = user_lib.read_user(user_cred)
+
+		try:
+			team_key = ndb.Key(urlsafe=team_key)
+		except:
+			return jsonify({"error": "Team not found"}), 404
+
+		team_entity = team_key.get()
+
+		if user_entity.key.urlsafe() not in team_entity.invited_members:
+			return jsonify({"error": "No active invite to given team"}), 400
+
+		# Move user from invited to member
+		team_entity.invited_members.remove(user_entity.key.urlsafe())
+		team_entity.put()
+
+		# Move team from team invites to teams
+		user_entity.team_invites.remove(team_entity.key.urlsafe())
 		user_entity.put()
 
 		return "Success", 200
