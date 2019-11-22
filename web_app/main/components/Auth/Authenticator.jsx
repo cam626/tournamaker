@@ -10,7 +10,7 @@ class Authenticator extends React.Component {
 
    		this.signOut = this.signOut.bind(this);
 	  	this.state = {
-	   		isLoggedIn: false
+	   		isLoggedIn: isLoggedIn()
 	   	};
 	}
 
@@ -25,7 +25,6 @@ class Authenticator extends React.Component {
   	}
 
 	componentDidMount() {
-    	this.setState({ isLoggedIn: isLoggedIn() });
     	this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
 			(user) => { 
 				user && setAuthToken().then(() => setAuthTokenCookie());
