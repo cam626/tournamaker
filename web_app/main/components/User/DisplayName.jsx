@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Label, Button, Input, 
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
-import { getDisplayName, updateDisplayName } from '../../api/displayName';
+import { getDisplayName, updateDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
 import fireabse from 'firebase';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Button } from 'reactstrap';
-import { getDisplayName } from '../../api/displayName';
+import { getDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
 
 class User extends React.Component {

@@ -3,7 +3,7 @@ import { Container, Row } from 'reactstrap';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
-import { getDisplayName } from '../../api/displayName';
+import { getDisplayName } from '../../api/user/displayName';
 import { setAuthToken, setAuthTokenCookie } from '../../api/authToken';
 import queryString from 'query-string';
 
