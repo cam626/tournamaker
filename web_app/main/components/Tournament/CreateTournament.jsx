@@ -25,6 +25,7 @@ class CreateTournament extends React.Component {
 		this.handleRegEndTimeChange = this.handleRegEndTimeChange.bind(this);
 	   	
 	   	this.state = {
+	   		error: '',
 	   		name: '',
 	   		nameError: false,
 	   		game: '',
@@ -68,6 +69,11 @@ class CreateTournament extends React.Component {
   	submit(e) {
   		e.preventDefault();
 
+  		if (this.state.nameError) {
+  			this.setState({ error: 'Error: you must choose a name' });
+  			return;
+		}
+  		
   		this.setState({ error: '' });
 
   		const newTournament = {
