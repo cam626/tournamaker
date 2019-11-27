@@ -57,7 +57,6 @@ def tournament_endpoints(app):
 		entity = tournament_lib.read_tournament(user_cred, name)
 		if entity is not None:
 			return jsonify({"error": "Tournament name already taken"}), 400
-
 		# Prevent the user from setting protected fields
 		not_allowed = ["created_date", "last_modified", "teams"]
 		for key in not_allowed:
@@ -269,3 +268,15 @@ def tournament_endpoints(app):
 			return jsonify({"error": "Tournament not in team events list"}), 400
 
 		return "Success", 200
+
+	@app.route('/tournament/<tournament_key>/match', methods=['POST'])
+	def add_match(tournament_key):
+		match_parameters = {
+			"team1": "This would be a teamkey",
+			"team2": "This would be another teamkey",
+			"num_games": 2
+		}
+		tournament_key = ndb.Key(urlsafe=tournament_key)
+		match_key = tournament_lib.add_match(tournament_key, **match_parameters)
+
+		return jsonify({"match_key": match_key.urlsafe()}), 200

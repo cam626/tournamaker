@@ -2,6 +2,7 @@
 from lib.auth_lib import authenticate_token
 from lib import user_lib
 from lib.models.models import User
+from google.appengine.ext import ndb
 
 from flask import jsonify, request
 import logging as logger
@@ -89,7 +90,9 @@ def user_endpoints(app):
 		user_entity = user_lib.read_user(user_cred)
 
 		try:
+			print(team_key)
 			team_key = ndb.Key(urlsafe=team_key)
+			print(team_key)
 		except:
 			return jsonify({"error": "Team not found"}), 404
 

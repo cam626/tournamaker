@@ -44,10 +44,11 @@ def team_endpoints(app):
 		json_body["invited_members"] = []
 		for display_name in invited_members_display_names:
 			member = user_lib.get_user_by_display_name(display_name)
-			member_entities.append(member)
+			if member:
+				member_entities.append(member)
 			
-			# Add the invited user keys to the list of invited members
-			json_body["invited_members"].append(member.key.urlsafe())
+				# Add the invited user keys to the list of invited members
+				json_body["invited_members"].append(member.key.urlsafe())
 
 		# The user that created the team should automatically be a member
 		user_entity = user_lib.read_user(user_cred)
