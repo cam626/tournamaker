@@ -1,12 +1,17 @@
 const defaultResponse = (response) => {
 	const copy = response.clone();
-	return response.json().then((data)=>{
-		if(!response.ok){
+	return response.json()
+	.catch(() => copy.text()
+		.then((txt) => {
+			if (txt == 'Success')
+				return Promise.resolve(txt);
+			return Promise.reject(txt)
+	}))
+	.then((data)=>{
+		if(!response.ok)
 			return Promise.reject(data.error);
-		}
 		return data;
-	}).catch(() => copy.text()
-	.then((txt) => Promise.reject(txt)));
+	});
 }
 
 export default defaultResponse;

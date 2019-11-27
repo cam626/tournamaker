@@ -2,7 +2,7 @@ const webpack = require('webpack');
 
 const config = {
   entry: [
-//    'script-loader!jquery/dist/jquery.min.js',
+    // 'script-loader!jquery/dist/jquery.min.js',
     './main/app.jsx'
   ],
   output: {
@@ -68,6 +68,8 @@ const config = {
 };
 
 module.exports = (env, argv) => {
+  config.plugins.push(new webpack.DefinePlugin({ 'process.env.DEV_MODE' : JSON.stringify(argv.mode) }));
+
   if (argv.mode === 'development') {
     config.optimization = { minimize: false };
   }

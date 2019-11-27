@@ -77,25 +77,23 @@ def tournament_endpoints(app):
 		if structure not in tournament_structures:
 			return jsonify({"error": "The tournament structure {} is not allowed".format(structure)}), 400
 
-		if "start_date_time" not in json_body:
-			json_body["start_date_time"] = time_stamp + timedelta(minutes = 30)
-		else:
+		if "start_date_time" in json_body:
 			try:
 				json_body["start_date_time"] = datetime.strptime(json_body["start_date_time"], "%m/%d/%Y %H:%M:%S")
+				
+				if json_body["start_date_time"] < time_stamp:
+					json_body.pop("start_date_time", None)
 			except:
-				json_body["start_date_time"] = time_stamp + timedelta(minutes = 30)
-
-		if json_body["start_date_time"] < time_stamp:
-			return jsonify({"error": "The tournament start date cannot be before the current datetime"}), 400
+				json_body.pop("start_date_time", None)
 
 		if "end_date_time" in json_body:
 			try:
 				json_body["end_date_time"] = datetime.strptime(json_body["end_date_time"], "%m/%d/%Y %H:%M:%S")
+			
+				if json_body["end_date_time"] < json_body["start_date_time"]:
+					json_body.pop("end_date_time", None)
 			except:
-				json_body["end_date_time"] = None
-
-			if json_body["end_date_time"] < json_body["start_date_time"]:
-				return jsonify({"error": "The end date of the tournament can not be before the start date"}), 400
+				json_body.pop("end_date_time", None)
 
 		if "registration_open_date_time" in json_body:
 			try:
@@ -109,10 +107,10 @@ def tournament_endpoints(app):
 			try:
 				json_body["registration_close_date_time"] = datetime.strptime(json_body["registration_close_date_time"], "%m/%d/%Y %H:%M:%S")
 			except:
-				json_body["registration_close_date_time"] = None
+				json_body.pop("registration_close_date_time", None)
 
 		if structure == "n_elimination":
-			if "elimination_number" not in json_body:
+			if "elimination_number" not in json_body or not isinstance(json_body['elimination_number'], int):
 				return jsonify({"error": "The field 'elimination_number' is required with the 'n_elimination' tournament structure"}), 400
 
 		# Create a tournament from the request body

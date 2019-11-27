@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Label, Button, Input, 
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
-import { getDisplayName, updateDisplayName } from '../../api/displayName';
+import { getDisplayName, updateDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
 import fireabse from 'firebase';
 
@@ -66,7 +66,7 @@ class DisplayName extends React.Component {
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
 						<FormGroup>
-						<Label for="displayName">Display Name</Label>
+							<Label for="displayName">Display Name</Label>
 							<Input type='text' name='displayName' id='displayName' placeholder='Display Name'
 								onChange={this.handleNameChange} 
 								valid={this.state.valid == 1}
