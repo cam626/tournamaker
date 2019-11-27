@@ -27,9 +27,6 @@ class Tournament(ndb.Model):
 	# Must be one of the predefined structures
 	tournament_structure = ndb.StringProperty(required=True)
 
-	# If the user doesn't set this, it should be generated
-	start_date_time = ndb.DateTimeProperty(required=True)
-	
 	# Useful for sorting
 	created_date = ndb.DateTimeProperty()
 	last_modified = ndb.DateTimeProperty(auto_now_add=True)
@@ -39,6 +36,9 @@ class Tournament(ndb.Model):
 
 	description = ndb.TextProperty()
 
+	# If the user doesn't set this, the tournament will start whenever the user says
+	start_date_time = ndb.DateTimeProperty()
+	
 	# Tournaments can go for unlimited time
 	end_date_time = ndb.DateTimeProperty()
 
