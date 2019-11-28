@@ -151,7 +151,7 @@ def user_endpoints(app):
 		return "Success", 200
 
 	@app.route('/user/keys/convert', methods=['POST'])
-	def convert_keys_to_names():
+	def convert_user_keys_to_names():
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
 
@@ -168,8 +168,15 @@ def user_endpoints(app):
 
 		result = {}
 		for key in user_keys:
-			key_obj = ndb.Key(urlsafe=key)
+			try:
+				key_obj = ndb.Key(urlsafe=key)
+			except:
+				continue
+			
 			user_entity = key_obj.get()
+			if user_entity is None:
+				continue
+
 			result[key] = user_entity.display_name
 
 		return jsonify(result), 200
