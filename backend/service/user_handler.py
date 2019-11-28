@@ -149,3 +149,27 @@ def user_endpoints(app):
 		user_entity.put()
 
 		return "Success", 200
+
+	@app.route('/user/keys/convert', methods=['POST'])
+	def convert_keys_to_names():
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+
+		json_body = request.get_json()
+
+		if "keys" not in json_body:
+			return jsonify({"error": "The field 'keys' must be provided"}), 400
+
+		user_keys = json_body['keys']
+
+		result = {}
+		for key in user_keys:
+			key_obj = ndb.Key(urlsafe=key)
+			user_entity = key_obj.get()
+			result[key] = user_entity.display_name
+
+		return jsonify(result), 200
