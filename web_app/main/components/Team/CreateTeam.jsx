@@ -32,7 +32,6 @@ class CreateTeam extends React.Component {
 	}
 	handleInviteNameChange(e) { this.setState({ inviteName: e.target.value.trim() }); }
 	handleAddInvite() { 
-		console.log(this.state.invites);
 		if (!this.state.invites.includes(this.state.inviteName))
 			this.setState({ invites: [...this.state.invites, this.state.inviteName] }); 
 	}
@@ -49,7 +48,7 @@ class CreateTeam extends React.Component {
 
   		const newTeam = {
   			"name": this.state.name,
-  			'invited_members': this.invite
+  			'invited_members': this.state.invites
   		}
 
   		createTeam(newTeam).then(() => { this.toUser(); })
@@ -70,7 +69,7 @@ class CreateTeam extends React.Component {
 						<FormGroup row>
 							<Label for="name" md={2}>Name</Label>
 							<Col md={10}>
-								<Input type='text' name='name' id='name' placeholder='Tournament Name'
+								<Input type='text' name='name' id='name' placeholder='Team Name'
 									onChange={this.handleNameChange}
 									invalid={this.state.nameError != ''}
 								/>
@@ -82,6 +81,12 @@ class CreateTeam extends React.Component {
 									<Col md={9}>
 										<Input type='text' name='type' id='type' placeholder="User's Display Name"
 											onChange={this.handleInviteNameChange} 
+											onKeyPress={(e) => { 
+												if (e.key === 'Enter') {
+													e.preventDefault();
+													this.handleAddInvite(); 
+												}
+											}}
 										/>	
 									</Col>
 								</FormGroup>
