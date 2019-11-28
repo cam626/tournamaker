@@ -87,19 +87,26 @@ def user_endpoints(app):
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return jsonify({"error": "Unauthorized"}), 401
-		user_entity = user_lib.read_user(user_cred)
+		user_entity = user_lib.read_user(user_cred, use_cache=False, use_memcache=False)
 
 		try:
-			print(team_key)
 			team_key = ndb.Key(urlsafe=team_key)
-			print(team_key)
 		except:
 			return jsonify({"error": "Team not found"}), 404
 
-		team_entity = team_key.get()
+		team_entity = team_key.get(use_cache=False, use_memcache=False)
 
 		if user_entity.key.urlsafe() not in team_entity.invited_members:
 			return jsonify({"error": "No active invite to given team"}), 400
+
+		if user_entity.key.urlsafe() in team_entity.members:
+			team_entity.invited_members.remove(user_entity.key.urlsafe())
+			team_entity.put()
+
+			user_entity.team_invites.remove(team_entity.key.urlsafe())
+			user_entity.put()
+
+			return jsonify({"error": "User already on team"}), 400
 
 		# Move user from invited to member
 		team_entity.invited_members.remove(user_entity.key.urlsafe())
@@ -121,14 +128,14 @@ def user_endpoints(app):
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return jsonify({"error": "Unauthorized"}), 401
-		user_entity = user_lib.read_user(user_cred)
+		user_entity = user_lib.read_user(user_cred, use_cache=False, use_memcache=False)
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
 			return jsonify({"error": "Team not found"}), 404
 
-		team_entity = team_key.get()
+		team_entity = team_key.get(use_cache=False, use_memcache=False)
 
 		if user_entity.key.urlsafe() not in team_entity.invited_members:
 			return jsonify({"error": "No active invite to given team"}), 400
