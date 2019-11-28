@@ -1,3 +1,3 @@
 import createEntityEndpoint from '../tools/createEntityEndpoint';
 
-export default createEntityEndpoint('tournament');
+export default createEntityEndpoint('team');
