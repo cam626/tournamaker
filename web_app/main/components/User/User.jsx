@@ -40,7 +40,7 @@ class User extends React.Component {
   	toJoinTournament() { this.props.history.push('/tournament/find'); }
  	toCreateTournament() { this.props.history.push('/tournament/create'); }
   	toCreateTeam() { this.props.history.push('/team/create'); }
-  	toDisplayName() { this.props.history.push('/user/displayname'); }
+  	toDisplayName() { this.props.history.push(`/user/displayname?displayName=${this.state.user && this.state.user.display_name ? this.state.user.display_name : ''}`); }
 
 	render() {
 		return (
