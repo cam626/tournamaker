@@ -16,9 +16,7 @@ class FindTournament extends React.Component {
 	   	this.state = {
 	   		error: '',
 	   		name: '',
-	   		nameError: false,
-	   		inviteName: '',
-	   		invites: []
+	   		nameError: false
 	   	};
 	}
 
@@ -67,38 +65,46 @@ class FindTournament extends React.Component {
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
 						<FormGroup row>
-							<Label for="name" md={2}>Name</Label>
-							<Col md={10}>
-								<Input type='text' name='name' id='name' placeholder='Team Name'
-									onChange={this.handleNameChange}
-									invalid={this.state.nameError != ''}
+							<Label for="d_name" md={4}>Tournament Commisioner Display Name</Label>
+							<Col md={8}>
+								<Input type='text' name='d_name' id='d_name' placeholder='Display Name'
+									onChange={this.handleDNameChange}
+									invalid={this.state.dnameError}
 								/>
-								<FormFeedback>You must choose a tournament name</FormFeedback>
+								<FormFeedback>You must choose a commisioner name</FormFeedback>
 							</Col>		
 						</FormGroup>
-								<FormGroup row>
-									<Label for="" md={3}>Invite People to Your Team</Label>
-									<Col md={9}>
-										<Input type='text' name='type' id='type' placeholder="User's Display Name"
-											onChange={this.handleInviteNameChange} 
-											onKeyPress={(e) => { 
-												if (e.key === 'Enter') {
-													e.preventDefault();
-													this.handleAddInvite(); 
-												}
-											}}
-										/>	
-									</Col>
-								</FormGroup>
-							<ListGroup>
-								{ this.state.invites.map((name, i) =>
-									(<ListGroupItem key={i}>{name}</ListGroupItem>)) }
-    						</ListGroup>
+						<FormGroup row>
+							<Label for="t_name" md={4}>Tournament Name</Label>
+							<Col md={8}>
+								<Input type='text' name='t_name' id='t_name' placeholder="Tournament Name"
+									onChange={this.handleTNameChange} 
+									invalid={this.state.tnameError}
+								/>
+								<FormFeedback>You must choose a tournament name</FormFeedback>	
+							</Col>
+						</FormGroup>
+						<FormGroup row>
+							<Label for="team" md={2}>Team</Label>
+							<Col md={8}>
+								<Input type="select" name="struct" id="struct" 
+									onChange={this.handleStructChange} 
+									invalid={this.state.teamError}
+								>
+          								<option value={''}>----</option>
+          								{
+          									//get teams from backend
+          								}
+        							</Input>
+									<FormText>The team you will be registering for the tournament with</FormText>	
+									<FormFeedback>You must choose a team</FormFeedback>	
+							</Col>
+						</FormGroup>						
 						{
 							this.state.error && 
 							<h3>{this.state.error}</h3>
 						}
-						<Button type='button' onClick={this.handleAddInvite}>Add User to Invites</Button><Button>Submit</Button>
+						<Button>Submit</Button>
 					</Form>
 				</Row>
 			</Container>
