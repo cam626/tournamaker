@@ -1,3 +1,11 @@
 import getEntityEndpoint from '../tools/getEntityEndpoint';
+import keysToDict from '../tools/keysToDict';
 
-export default getEntityEndpoint('team');
+const getTeam = getEntityEndpoint('team');
+
+const getTeamsFromKeys = keysToDict('team');
+
+export {
+	getTeam,
+	getTeamsFromKeys
+}

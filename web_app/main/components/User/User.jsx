@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Button } from 'reactstrap';
 import getUser from '../../api/user/getUser';
-import getTeam from '../../api/team/getTeam';
+import { getTeam } from '../../api/team/getTeam';
 import getTournament from '../../api/tournament/getTournament';
 import requireAuth from '../../tools/requireAuth';
 import TeamInviteCard from '../Team/TeamInviteCard';

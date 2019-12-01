@@ -1,7 +1,11 @@
 import React from 'react';
 import { Container, Row, Col, Label, Button, Input, CustomInput, 
 	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem } from 'reactstrap';
-import createTeam from '../../api/team/createTeam';
+import TournamentCard from './TournamentCard';
+import findTournament from '../../api/tournament/findTournament';
+import joinTournament from '../../api/tournament/joinTournament';
+import getUser from '../../api/user/getUser';
+import { getTeamsFromKeys } from '../../api/team/getTeam';
 import requireAuth from '../../tools/requireAuth';
 
 class FindTournament extends React.Component {
@@ -9,47 +13,90 @@ class FindTournament extends React.Component {
    		super(props);
 
    		this.toUser = this.toUser.bind(this);
-	   	this.handleNameChange = this.handleNameChange.bind(this);
-		this.handleInviteNameChange = this.handleInviteNameChange.bind(this);
-	   	this.handleAddInvite = this.handleAddInvite.bind(this);
+	   	this.handleDNameChange = this.handleDNameChange.bind(this);
+	   	this.handleTNameChange = this.handleTNameChange.bind(this);
+		this.handleFindTournament = this.handleFindTournament.bind(this);
+		this.handleTeamChange = this.handleTeamChange.bind(this);
 
 	   	this.state = {
 	   		error: '',
-	   		name: '',
-	   		nameError: false
+	   		dname: '',
+	   		tname: '',
+	   		team: '',
+	   		dnameError: false,
+	   		tnameError: false,
+	   		teamError: false,
+	   		tournament_key: '',
+	   		tournament: null,
+	   		teams: []
 	   	};
+	}
+
+	componentDidMount() {
+		console.log(!!this.state.tournament);
+		getUser().then((fetchedUser) => {
+    		this.setState({ teams: fetchedUser.teams });
+    		getTeamsFromKeys(fetchedUser.teams).then((dict) => this.setState(dict));
+    	});
 	}
 
   	toUser() { this.props.history.push('/user'); }
 
-	handleNameChange(e) { 
+	handleDNameChange(e) { 
 		this.setState({ 
-			name: e.target.value.trim(),
-			nameError: e.target.value ? false : true
+			dname: e.target.value.trim(),
+			dnameError: e.target.value ? false : true
 		});
 	}
-	handleInviteNameChange(e) { this.setState({ inviteName: e.target.value.trim() }); }
-	handleAddInvite() { 
-		if (!this.state.invites.includes(this.state.inviteName))
-			this.setState({ invites: [...this.state.invites, this.state.inviteName] }); 
+	handleTNameChange(e) { 
+		this.setState({ 
+			tname: e.target.value.trim(),
+			tnameError: e.target.value ? false : true
+		});
+	}
+	handleTeamChange(e) { 
+		this.setState({ 
+			team: e.target.value,
+			teamError: e.target.value ? false : true
+		});
+	}
+	handleFindTournament() { 
+		if (!this.state.dname || !this.state.tname) {
+			this.setState({
+				dnameError: this.state.dname ? false : true,
+				tnameError: this.state.tname ? false : true
+			});
+		} else return findTournament(this.state.dname, this.state.tname)
+		.catch((newError) => {
+			this.setState({
+				tournament_key: '',
+				tournament: null,
+				error: `Error: ${newError}`
+			}); 
+		}).then((newTournament) => {
+			this.setState({ 
+				tournament: newTournament.tournament,
+				tournament_key: newTournament.tournament_key
+			});
+		});
 	}
 
   	submit(e) {
   		e.preventDefault();
 
-  		if (this.state.nameError) {
-  			this.setState({ error: 'Error: you must choose a Team Name' });
+  		if (!this.state.tournament_key) {
+  			this.setState({ error: 'Error: you must find a Tournament, use the Find Tournament button' });
+  			return;
+		}
+
+  		if (!this.state.team) {
+  			this.setState({ error: 'Error: you must choose a Team' });
   			return;
 		}
 
   		this.setState({ error: '' });
 
-  		const newTeam = {
-  			"name": this.state.name,
-  			'invited_members': this.state.invites
-  		}
-
-  		createTeam(newTeam).then(() => { this.toUser(); })
+  		joinTournament(this.state.tournament_key, this.state.team).then(() => { this.toUser(); })
   		.catch((newError) => { this.setState({ error: `Error: ${newError}` }); });
   	}
 
@@ -70,6 +117,12 @@ class FindTournament extends React.Component {
 								<Input type='text' name='d_name' id='d_name' placeholder='Display Name'
 									onChange={this.handleDNameChange}
 									invalid={this.state.dnameError}
+									onKeyPress={(e) => { 
+										if (e.key === 'Enter') {
+											e.preventDefault();
+											this.handleFindTournament(); 
+										}
+									}}
 								/>
 								<FormFeedback>You must choose a commisioner name</FormFeedback>
 							</Col>		
@@ -80,20 +133,31 @@ class FindTournament extends React.Component {
 								<Input type='text' name='t_name' id='t_name' placeholder="Tournament Name"
 									onChange={this.handleTNameChange} 
 									invalid={this.state.tnameError}
+									onKeyPress={(e) => { 
+										if (e.key === 'Enter') {
+											e.preventDefault();
+											this.handleFindTournament(); 
+										}
+									}}
 								/>
 								<FormFeedback>You must choose a tournament name</FormFeedback>	
 							</Col>
 						</FormGroup>
+						<Button type="button" onClick={this.handleFindTournament}>Find Tournament</Button>
+						{
+							this.state.tournament &&
+							<TournamentCard {...this.state.tournament} />
+						}
 						<FormGroup row>
 							<Label for="team" md={2}>Team</Label>
 							<Col md={8}>
-								<Input type="select" name="struct" id="struct" 
-									onChange={this.handleStructChange} 
+								<Input type="select" name="team" id="team" 
+									onChange={this.handleTeamChange} 
 									invalid={this.state.teamError}
 								>
           								<option value={''}>----</option>
           								{
-          									//get teams from backend
+          									this.state.teams.map((key) => <option key={key} value={key}>{this.state[key] && this.state[key].name}</option>)
           								}
         							</Input>
 									<FormText>The team you will be registering for the tournament with</FormText>	
@@ -104,7 +168,7 @@ class FindTournament extends React.Component {
 							this.state.error && 
 							<h3>{this.state.error}</h3>
 						}
-						<Button>Submit</Button>
+						<Button>Join Tournament</Button>
 					</Form>
 				</Row>
 			</Container>
