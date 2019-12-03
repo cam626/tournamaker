@@ -35,7 +35,7 @@ export default class SignIn extends React.Component {
 
 	componentDidMount() {
     	const params = queryString.parse(this.props.location.search);
-  		let loggedInGoto = '/user';
+  		let loggedInGoto = '/user/dashboard';
   		if (params && 'redirect' in params) {
   			this.setState({ redirect : params.redirect });
   			loggedInGoto = params.redirect;

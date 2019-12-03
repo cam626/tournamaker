@@ -3,12 +3,12 @@ import { Container, Row, Col, Label, Button, Input, CustomInput,
 	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem } from 'reactstrap';
 import createTeam from '../../api/team/createTeam';
 import requireAuth from '../../tools/requireAuth';
+import UserNav from '../User/UserNav';
 
 class CreateTeam extends React.Component {
  	constructor(props) {
    		super(props);
 
-   		this.toUser = this.toUser.bind(this);
 	   	this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleInviteNameChange = this.handleInviteNameChange.bind(this);
 	   	this.handleAddInvite = this.handleAddInvite.bind(this);
@@ -21,8 +21,6 @@ class CreateTeam extends React.Component {
 	   		invites: []
 	   	};
 	}
-
-  	toUser() { this.props.history.push('/user'); }
 
 	handleNameChange(e) { 
 		this.setState({ 
@@ -59,10 +57,7 @@ class CreateTeam extends React.Component {
 		return (
 			<Container>
 				<Row>
-					Create a new Team
-				</Row>
-				<Row>
-					<Button type='button' onClick={this.toUser}>Return to User</Button>
+					<UserNav active='/team/create'/>
 				</Row>
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
@@ -76,24 +71,26 @@ class CreateTeam extends React.Component {
 								<FormFeedback>You must choose a tournament name</FormFeedback>
 							</Col>		
 						</FormGroup>
-								<FormGroup row>
-									<Label for="" md={3}>Invite People to Your Team</Label>
-									<Col md={9}>
-										<Input type='text' name='type' id='type' placeholder="User's Display Name"
-											onChange={this.handleInviteNameChange} 
-											onKeyPress={(e) => { 
-												if (e.key === 'Enter') {
-													e.preventDefault();
-													this.handleAddInvite(); 
-												}
-											}}
-										/>	
-									</Col>
-								</FormGroup>
-							<ListGroup>
-								{ this.state.invites.map((name, i) =>
-									(<ListGroupItem key={i}>{name}</ListGroupItem>)) }
-    						</ListGroup>
+						<FormGroup row>
+							<Label for="invite" md={3}>Invite People to Your Team</Label>
+							<Col md={9}>
+								<Input type='text' name='invite' id='invite' placeholder="User's Display Name"
+									onChange={this.handleInviteNameChange} 
+									onKeyPress={(e) => { 
+										if (e.key === 'Enter') {
+											e.preventDefault();
+											this.handleAddInvite(); 
+										}
+									}}
+								/>	
+							</Col>
+						</FormGroup>
+						<ListGroup>
+						{
+							this.state.invites.map((name, i) =>
+								(<ListGroupItem key={i}>{name}</ListGroupItem>))
+						}
+    					</ListGroup>
 						{
 							this.state.error && 
 							<h3>{this.state.error}</h3>

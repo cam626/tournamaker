@@ -18,7 +18,7 @@ export default (props) => (<div>
 		<Route path='/api' component={API} />
 		<Route path='/signin' component={SignIn} />
 		<Route path='/user/displayname' render={() => <DisplayName {...props}/>} />
-		<Route path='/user' render={() => <User {...props}/>} />
+		<Route path='/user/dashboard' render={() => <User {...props}/>} />
 		<Route path='/tournament/create' render={() => <CreateTournament {...props}/>} />
 		<Route path='/tournament/find' render={() => <FindTournament {...props}/>} />
 		<Route path='/team/create' render={() => <CreateTeam {...props}/>} />

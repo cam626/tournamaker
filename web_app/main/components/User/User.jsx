@@ -4,6 +4,7 @@ import getUser from '../../api/user/getUser';
 import getTeam from '../../api/team/getTeam';
 import getTournament from '../../api/tournament/getTournament';
 import requireAuth from '../../tools/requireAuth';
+import UserNav from './UserNav';
 import TeamInviteCard from '../Team/TeamInviteCard';
 import TeamCard from '../Team/TeamCard';
 import TournamentCard from '../Tournament/TournamentCard';
@@ -12,10 +13,6 @@ class User extends React.Component {
  	constructor(props) {
  		super(props);
 
-   		this.toJoinTournament = this.toJoinTournament.bind(this);
-		this.toCreateTournament = this.toCreateTournament.bind(this);
-	   	this.toCreateTeam = this.toCreateTeam.bind(this);
-	   	this.toDisplayName = this.toDisplayName.bind(this);
 	   	this.update = this.update.bind(this);
 	   	this.state = { user: {} };
 	}
@@ -37,23 +34,15 @@ class User extends React.Component {
 
   	update() {this.componentDidMount()}
 
-  	toJoinTournament() { this.props.history.push('/tournament/find'); }
- 	toCreateTournament() { this.props.history.push('/tournament/create'); }
-  	toCreateTeam() { this.props.history.push('/team/create'); }
-  	toDisplayName() { this.props.history.push('/user/displayname'); }
-
 	render() {
 		return (
 			<Container>
 				<Row>
+					<UserNav />
+				</Row>				
+				<Row>
 					Hi { this.state.user.display_name }!
 				</Row>
-				<Row>
-					<Button type='button' onClick={this.toJoinTournament}>Join a Tournament</Button>
-					<Button type='button' onClick={this.toCreateTournament}>Create a Tournament</Button>
-					<Button type='button' onClick={this.toCreateTeam}>Create a Team</Button>	
-					<Button type='button' onClick={this.toDisplayName}>Update Your Display Name</Button>
-				</Row>				
 				{
 					this.state.user && this.state.user.team_invites &&
 					<Row>

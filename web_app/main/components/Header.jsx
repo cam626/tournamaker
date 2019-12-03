@@ -24,15 +24,17 @@ class Header extends React.Component {
 							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
 						</NavItem>
 						<NavItem>
-							{
-								this.props.isLoggedIn ?
-								<div>
-									<NavLink to='/user' tag={RRNavLink}>User</NavLink>
-									<NavLink onClick={this.props.signOut}>Log Out</NavLink>
-								</div>
-								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
-							}
+							<NavLink to='/' tag={RRNavLink}>Public Events</NavLink>
 						</NavItem>
+						{
+							this.props.isLoggedIn && <NavItem><NavLink to='/user/dashboard' tag={RRNavLink}>User</NavLink></NavItem>
+						}
+						{
+							this.props.isLoggedIn && <NavItem><NavLink onClick={this.props.signOut}>Log Out</NavLink></NavItem>
+						}
+						{
+							!this.props.isLoggedIn && <NavItem><NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink></NavItem>
+						}	
 					</Nav>
 				</Collapse>
 			</Navbar>

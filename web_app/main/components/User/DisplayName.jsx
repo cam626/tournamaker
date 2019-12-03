@@ -4,12 +4,12 @@ import { Container, Row, Label, Button, Input,
 import { getDisplayName, updateDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
 import fireabse from 'firebase';
+import UserNav from './UserNav';
 
 class DisplayName extends React.Component {
  	constructor(props) {
    		super(props);
 
-   		this.toUser = this.toUser.bind(this);
 	   	this.onError = this.onError.bind(this);
 	   	this.handleNameChange = this.handleNameChange.bind(this);
 	   	this.state = {
@@ -25,8 +25,6 @@ class DisplayName extends React.Component {
     		this.setState({ displayName: fetchedDisplayName });
     	});
   	}
-
-  	toUser() { this.props.history.push('/user'); }
 
 	onError(newError) { 
 		this.setState({ 
@@ -56,9 +54,15 @@ class DisplayName extends React.Component {
 	render() {
 		return (
 			<Container>
+				{
+					this.props.isLoggedIn && 
+					<Row>
+						<UserNav displayName={false} />	
+					</Row>
+				}
 				<Row>
 					{
-						this.state.displayName ?
+						this.props.isLoggedIn ?
 						<h4>Update Your Display Name</h4>
 						: <h4>Please choose a Display Name</h4>
 					}
@@ -76,9 +80,6 @@ class DisplayName extends React.Component {
 							<FormFeedback>{this.state.error}</FormFeedback>
 							<FormText>Your Display Name will be how other users can identify you.</FormText>
 						</FormGroup>
-						{
-							this.state.displayName && <Button type='button' onClick={this.toUser}>Return to User</Button>
-      					}
       					<Button>Submit</Button>
 					</Form>
 				</Row>

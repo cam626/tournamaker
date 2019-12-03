@@ -3,12 +3,12 @@ import { Container, Row, Col, Label, Button, Input, CustomInput,
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
 import createTournament from '../../api/tournament/createTournament';
 import requireAuth from '../../tools/requireAuth';
+import UserNav from '../User/UserNav';
 
 class CreateTournament extends React.Component {
  	constructor(props) {
    		super(props);
 
-   		this.toUser = this.toUser.bind(this);
 	   	this.handleNameChange = this.handleNameChange.bind(this);
 	   	this.handleGameChange = this.handleGameChange.bind(this);
 		this.handleStructChange = this.handleStructChange.bind(this);
@@ -43,8 +43,6 @@ class CreateTournament extends React.Component {
 	   		regEndTime: ''
 	   	};
 	}
-
-  	toUser() { this.props.history.push('/user'); }
 
 	handleNameChange(e) { 
 		this.setState({ 
@@ -98,10 +96,7 @@ class CreateTournament extends React.Component {
 		return (
 			<Container>
 				<Row>
-					Create a new Tournament
-				</Row>
-				<Row>
-					<Button type='button' onClick={this.toUser}>Return to User</Button>
+					<UserNav active='/tournament/create'/>
 				</Row>
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
