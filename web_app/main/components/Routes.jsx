@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Header from './Header';
+import Footer from './Footer';
 import Landing from '../Landing';
 import _404 from '../_404';
 import API from './API';
@@ -15,6 +16,7 @@ export default (props) => (<div>
 	<Header {...props}/>
   	<Switch>
 		<Route exact path='/' component={Landing} />
+		<Route path='/home' component={Landing} />
 		<Route path='/api' component={API} />
 		<Route path='/signin' component={SignIn} />
 		<Route path='/user/displayname' render={() => <DisplayName {...props}/>} />
@@ -24,4 +26,5 @@ export default (props) => (<div>
 		<Route path='/team/create' render={() => <CreateTeam {...props}/>} />
 		<Route path='*' component={_404} />
 	</Switch>
+	<Footer />
 </div>);

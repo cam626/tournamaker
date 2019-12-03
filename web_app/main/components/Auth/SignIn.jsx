@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row } from 'reactstrap';
+import { Container, Row, Alert } from 'reactstrap';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
 import firebaseConfig from '../../constants/firebaseConfig';
@@ -58,21 +58,13 @@ export default class SignIn extends React.Component {
 	render() {
 		return (
 			<Container>
+				<h1 className="text-center">Sign in to Tournamaker</h1>
 				{
 					this.state.redirect &&
-					<Row>
-						<h4>You cannot access the {this.state.redirect} page without logging in.</h4>
-					</Row>
+					<Alert color='danger' className="text-center">You cannot access the {this.state.redirect} page without logging in.</Alert>
 				}
-				<Row>
-					<h1>Sign in to Tournamaker</h1>
-				</Row>
-				<Row>
-					<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
-				</Row>
-				<Row>
-					<h3>Note: we use cookies to keep you logged in!</h3>
-				</Row>
+				<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+				<h4 className="text-center">Note: we use cookies to keep you logged in!</h4>
 			</Container>
 		);
 	}

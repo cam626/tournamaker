@@ -34,7 +34,6 @@ class FindTournament extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log(!!this.state.tournament);
 		getUser().then((fetchedUser) => {
     		this.setState({ teams: fetchedUser.teams });
     		getTeamsFromKeys(fetchedUser.teams).then((dict) => this.setState(dict));

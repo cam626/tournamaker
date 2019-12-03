@@ -3,6 +3,7 @@ import { Container, Row, Button } from 'reactstrap';
 import getUser from '../../api/user/getUser';
 import { getTeamsFromKeys } from '../../api/team/getTeam';
 import getEventsFromKeys from '../../api/event/getEventsFromKeys';
+import { getTournamentsFromKeys } from '../../api/tournament/getTournament';
 import requireAuth from '../../tools/requireAuth';
 import UserNav from './UserNav';
 import TeamInviteCard from '../Team/TeamInviteCard';
@@ -25,17 +26,16 @@ class User extends React.Component {
 				loaded: true,
     			user: fetchedUser
     		});
-    		// getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
-    		// getTeamsFromKeys(fetchedUser.teams).then((dict) => {
-    		// 	this.setState(dict);
-    		// 	Object.values(dict).forEach((team) => {
-    		// 		getEventsFromKeys(team.events).then((dict) => this.setState(dict));
-    		// 	});
-    		// });
+    		getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
+    		getTeamsFromKeys(fetchedUser.teams).then((dict) => {
+    			this.setState(dict);
+    			Object.values(dict).forEach((team) => {
+    				getEventsFromKeys(team.events).then((dict) => this.setState(dict));
+    			});
+    		});
+    		getTournamentsFromKeys(fetchedUser.tournaments).then((dict) => this.setState(dict));
     	});
   	}
-
-  	//update() {this.componentDidMount()}
 
 	render() {
 		return (
@@ -48,7 +48,7 @@ class User extends React.Component {
 					<Row>
 					Team invites:
 					{
-						this.state.user.team_invites.map((key) => <TeamInviteCard update={this.update} key={key} api_key={key} {...this.state[key]} />)
+						this.state.user.team_invites.map((key) => this.state[key] && <TeamInviteCard update={this.update} key={key} api_key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
@@ -57,7 +57,7 @@ class User extends React.Component {
 					<Row>
 					Tournaments You're Commisioning:
 					{
-						this.state.user.tournaments.map((key) => <TournamentCard key={key} {...this.state[key]} />)
+						this.state.user.tournaments.map((key) => this.state[key] && <TournamentCard key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
@@ -75,7 +75,7 @@ class User extends React.Component {
 					<Row>
 					Teams you're in:
 					{
-						this.state.user.teams.map((key) => <TeamCard key={key} {...this.state[key]} />)
+						this.state.user.teams.map((key) => this.state[key] && <TeamCard key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
