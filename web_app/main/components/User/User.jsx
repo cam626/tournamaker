@@ -3,9 +3,7 @@ import { Container, Row, Button } from 'reactstrap';
 import getUser from '../../api/user/getUser';
 import { getTeamsFromKeys } from '../../api/team/getTeam';
 import getEventsFromKeys from '../../api/event/getEventsFromKeys';
-import { getTournamentsFromKeys } from '../../api/tournament/getTournament';
 import requireAuth from '../../tools/requireAuth';
-import UserNav from './UserNav';
 import TeamInviteCard from '../Team/TeamInviteCard';
 import TeamCard from '../Team/TeamCard';
 import TournamentCard from '../Tournament/TournamentCard';
@@ -14,18 +12,17 @@ class User extends React.Component {
  	constructor(props) {
  		super(props);
 
-	   	this.state = { 
-	   		loaded: false,
-	   		user: {} 
-	   	};
+   		this.toJoinTournament = this.toJoinTournament.bind(this);
+		this.toCreateTournament = this.toCreateTournament.bind(this);
+	   	this.toCreateTeam = this.toCreateTeam.bind(this);
+	   	this.toDisplayName = this.toDisplayName.bind(this);
+	   	this.update = this.update.bind(this);
+	   	this.state = { user: {} };
 	}
 	
 	componentDidMount() {
-    	if (!this.state.loaded) getUser().then((fetchedUser) => {
-    		this.setState({ 
-				loaded: true,
-    			user: fetchedUser
-    		});
+    	getUser().then((fetchedUser) => {
+    		this.setState({ user: fetchedUser });
     		getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
     		getTeamsFromKeys(fetchedUser.teams).then((dict) => {
     			this.setState(dict);
@@ -33,22 +30,34 @@ class User extends React.Component {
     				getEventsFromKeys(team.events).then((dict) => this.setState(dict));
     			});
     		});
-    		getTournamentsFromKeys(fetchedUser.tournaments).then((dict) => this.setState(dict));
     	});
   	}
+
+  	update() {this.componentDidMount()}
+
+  	toJoinTournament() { this.props.history.push('/tournament/find'); }
+ 	toCreateTournament() { this.props.history.push('/tournament/create'); }
+  	toCreateTeam() { this.props.history.push('/team/create'); }
+  	toDisplayName() { this.props.history.push(`/user/displayname?displayName=${this.state.user && this.state.user.display_name ? this.state.user.display_name : ''}`); }
 
 	render() {
 		return (
 			<Container>
-					<h4 className="text-center">Hi { this.state.user.display_name }!</h4>
-					<UserNav />	
-				
+				<Row>
+					Hi { this.state.user.display_name }!
+				</Row>
+				<Row>
+					<Button type='button' onClick={this.toJoinTournament}>Join a Tournament</Button>
+					<Button type='button' onClick={this.toCreateTournament}>Create a Tournament</Button>
+					<Button type='button' onClick={this.toCreateTeam}>Create a Team</Button>	
+					<Button type='button' onClick={this.toDisplayName}>Update Your Display Name</Button>
+				</Row>				
 				{
 					this.state.user && this.state.user.team_invites &&
 					<Row>
 					Team invites:
 					{
-						this.state.user.team_invites.map((key) => this.state[key] && <TeamInviteCard update={this.update} key={key} api_key={key} {...this.state[key]} />)
+						this.state.user.team_invites.map((key) => <TeamInviteCard update={this.update} key={key} api_key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
@@ -57,7 +66,7 @@ class User extends React.Component {
 					<Row>
 					Tournaments You're Commisioning:
 					{
-						this.state.user.tournaments.map((key) => this.state[key] && <TournamentCard key={key} {...this.state[key]} />)
+						this.state.user.tournaments.map((key) => <TournamentCard key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
@@ -66,7 +75,7 @@ class User extends React.Component {
 					<Row>
 					Tournaments You're Participating In:
 					{
-						this.state.user.teams.map((team) => this.state[team] && this.state[team].events.map((key) => <TournamentCard team_name={this.state[team].name} key={key} {...this.state[key]} />))
+						this.state.user.teams.map((team) => team.events.map((key) => <TournametCard key={key} {...this.state[key]} />))
 					}
 					</Row>
 				}
@@ -75,7 +84,7 @@ class User extends React.Component {
 					<Row>
 					Teams you're in:
 					{
-						this.state.user.teams.map((key) => this.state[key] && <TeamCard key={key} {...this.state[key]} />)
+						this.state.user.teams.map((key) => <TeamCard key={key} {...this.state[key]} />)
 					}
 					</Row>
 				}
