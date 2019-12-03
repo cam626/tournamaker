@@ -16,6 +16,7 @@ class TeamCard extends React.Component {
    	}
 
   	componentDidUpdate() {
+      console.log(this.props);
     	this.props.members && getNamesFromKeys(this.props.members)
     	.then((dict) => this.setState({ members: dict }));
   	}

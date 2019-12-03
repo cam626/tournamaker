@@ -1,3 +1,11 @@
 import getEntityEndpoint from '../tools/getEntityEndpoint';
+import keysToDict from '../tools/keysToDict';
 
-export default getEntityEndpoint('tournament');
+const getTournament = getEntityEndpoint('tournament');
+
+const getTournamentsFromKeys = keysToDict('team');
+
+export {
+	getTournament,
+	getTournamentsFromKeys
+}
