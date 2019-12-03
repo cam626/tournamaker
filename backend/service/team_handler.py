@@ -159,3 +159,35 @@ def team_endpoints(app):
 		user_entity.put()
 
 		return "Success", 200
+	
+	@app.route('/team/keys/convert', methods=['POST'])
+	def convert_team_keys_to_names():
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+
+		json_body = request.get_json()
+
+		if "keys" not in json_body:
+			return jsonify({"error": "The field 'keys' must be provided"}), 400
+
+		team_keys = json_body['keys']
+
+		result = {}
+		for key in team_keys:
+			try:
+				key_obj = ndb.Key(urlsafe=key)
+			except:
+				continue
+
+			team_entity = key_obj.get()
+
+			if not team_entity:
+				continue
+
+			result[key] = team_entity.to_dict()
+
+		return jsonify(result), 200
