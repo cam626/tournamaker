@@ -2,6 +2,7 @@ import Global from '../../variables';
 import backendHostUrl from '../../constants/backend';
 import defaultResponse from '../defaultResponse';
 import headers from '../headers';
+import keysToDict from '../tools/keysToDict';
 
 const getDisplayName = () => {
 	return fetch(`${backendHostUrl}user`, {
@@ -23,7 +24,10 @@ const updateDisplayName = (newName) => {
 	.then((response) => response.display_name);
 };
 
+const getNamesFromKeys = keysToDict('user');
+
 export {
 	getDisplayName,
-	updateDisplayName
+	updateDisplayName,
+	getNamesFromKeys
 };

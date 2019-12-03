@@ -9,7 +9,7 @@ import User from './User/User';
 import DisplayName from './User/DisplayName';
 import CreateTournament from './Tournament/CreateTournament';
 import CreateTeam from './Team/CreateTeam';
-import FIndTournament from './Tournament/FindTournament';
+import FindTournament from './Tournament/FindTournament';
 
 export default (props) => (<div>
 	<Header {...props}/>

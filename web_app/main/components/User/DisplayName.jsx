@@ -5,6 +5,8 @@ import { getDisplayName, updateDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
 import fireabse from 'firebase';
 import UserNav from './UserNav';
+import queryString from 'query-string';
+
 
 class DisplayName extends React.Component {
  	constructor(props) {
@@ -24,9 +26,13 @@ class DisplayName extends React.Component {
     	getDisplayName().then((fetchedDisplayName) => {
     		this.setState({ displayName: fetchedDisplayName });
     	});
+    	const params = queryString.parse(this.props.location.search);
+  		if (params && 'displayName' in params) {
+  			this.setState({ displayName : params.displayName });
+  		}
   	}
 
-	onError(newError) { 
+	onError(newError) {
 		this.setState({ 
 			error: newError,
 			valid: 0

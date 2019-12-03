@@ -105,7 +105,7 @@ class CreateTournament extends React.Component {
 							<Col md={10}>
 								<Input type='text' name='name' id='name' placeholder='Tournament Name'
 									onChange={this.handleNameChange}
-									invalid={this.state.nameError != ''}
+									invalid={this.state.nameError}
 								/>
 								<FormFeedback>You must choose a tournament name</FormFeedback>
 								<FormText>Teams will find your tournament through your display name and the tournament name</FormText>

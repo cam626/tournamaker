@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Row, Button } from 'reactstrap';
 import getUser from '../../api/user/getUser';
-import getTeam from '../../api/team/getTeam';
-import getTournament from '../../api/tournament/getTournament';
+import { getTeamsFromKeys } from '../../api/team/getTeam';
+import getEventsFromKeys from '../../api/event/getEventsFromKeys';
 import requireAuth from '../../tools/requireAuth';
 import UserNav from './UserNav';
 import TeamInviteCard from '../Team/TeamInviteCard';
@@ -20,14 +20,12 @@ class User extends React.Component {
 	componentDidMount() {
     	getUser().then((fetchedUser) => {
     		this.setState({ user: fetchedUser });
-    		fetchedUser.team_invites.forEach((key) => {
-    			getTeam(key).then((team) => this.setState({ [key]: team }));
-    		});
-    		fetchedUser.teams.forEach((key) => {
-    			getTeam(key).then((team) => this.setState({ [key]: team }));
-    		});
-    		fetchedUser.tournaments.forEach((key) => {
-    			getTournament(key).then((tourney) => this.setState({ [key]: tourney }));
+    		getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
+    		getTeamsFromKeys(fetchedUser.teams).then((dict) => {
+    			this.setState(dict);
+    			Object.values(dict).forEach((team) => {
+    				getEventsFromKeys(team.events).then((dict) => this.setState(dict));
+    			});
     		});
     	});
   	}
@@ -61,12 +59,15 @@ class User extends React.Component {
 					}
 					</Row>
 				}
-				<Row>
+				{
+					this.state.user && this.state.user.teams &&
+					<Row>
 					Tournaments You're Participating In:
-				</Row>
-				<Row>
-					tourney
-				</Row>
+					{
+						this.state.user.teams.map((team) => team.events.map((key) => <TournametCard key={key} {...this.state[key]} />))
+					}
+					</Row>
+				}
 				{
 					this.state.user && this.state.user.teams &&
 					<Row>

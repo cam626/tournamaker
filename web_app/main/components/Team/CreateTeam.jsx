@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Label, Button, Input, CustomInput, 
-	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem } from 'reactstrap';
+	Form, FormGroup, FormFeedback, ListGroup, ListGroupItem } from 'reactstrap';
 import createTeam from '../../api/team/createTeam';
 import requireAuth from '../../tools/requireAuth';
 import UserNav from '../User/UserNav';
@@ -66,7 +66,7 @@ class CreateTeam extends React.Component {
 							<Col md={10}>
 								<Input type='text' name='name' id='name' placeholder='Team Name'
 									onChange={this.handleNameChange}
-									invalid={this.state.nameError != ''}
+									invalid={this.state.nameError}
 								/>
 								<FormFeedback>You must choose a tournament name</FormFeedback>
 							</Col>		
@@ -91,6 +91,7 @@ class CreateTeam extends React.Component {
 								(<ListGroupItem key={i}>{name}</ListGroupItem>))
 						}
     					</ListGroup>
+
 						{
 							this.state.error && 
 							<h3>{this.state.error}</h3>
