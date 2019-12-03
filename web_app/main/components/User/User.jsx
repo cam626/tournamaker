@@ -35,12 +35,9 @@ class User extends React.Component {
 	render() {
 		return (
 			<Container>
-				<Row>
-					<UserNav />
-				</Row>				
-				<Row>
-					Hi { this.state.user.display_name }!
-				</Row>
+					<h4 className="text-center">Hi { this.state.user.display_name }!</h4>
+					<UserNav />	
+				
 				{
 					this.state.user && this.state.user.team_invites &&
 					<Row>

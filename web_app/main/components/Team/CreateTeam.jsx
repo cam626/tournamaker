@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Label, Button, Input, CustomInput, 
-	Form, FormGroup, FormFeedback, ListGroup, ListGroupItem } from 'reactstrap';
+	Form, FormGroup, FormFeedback, ListGroup, ListGroupItem, Alert } from 'reactstrap';
 import createTeam from '../../api/team/createTeam';
 import requireAuth from '../../tools/requireAuth';
 import UserNav from '../User/UserNav';
@@ -56,49 +56,45 @@ class CreateTeam extends React.Component {
 	render() {
 		return (
 			<Container>
-				<Row>
-					<UserNav active='/team/create'/>
-				</Row>
-				<Row>
-					<Form onSubmit={ (e) => this.submit(e) }>
-						<FormGroup row>
-							<Label for="name" md={2}>Name</Label>
-							<Col md={10}>
-								<Input type='text' name='name' id='name' placeholder='Team Name'
-									onChange={this.handleNameChange}
-									invalid={this.state.nameError}
-								/>
-								<FormFeedback>You must choose a tournament name</FormFeedback>
-							</Col>		
-						</FormGroup>
-						<FormGroup row>
-							<Label for="invite" md={3}>Invite People to Your Team</Label>
-							<Col md={9}>
-								<Input type='text' name='invite' id='invite' placeholder="User's Display Name"
-									onChange={this.handleInviteNameChange} 
-									onKeyPress={(e) => { 
-										if (e.key === 'Enter') {
-											e.preventDefault();
-											this.handleAddInvite(); 
-										}
-									}}
-								/>	
-							</Col>
-						</FormGroup>
-						<ListGroup>
-						{
-							this.state.invites.map((name, i) =>
-								(<ListGroupItem key={i}>{name}</ListGroupItem>))
-						}
-    					</ListGroup>
-
-						{
-							this.state.error && 
-							<h3>{this.state.error}</h3>
-						}
-						<Button type='button' onClick={this.handleAddInvite}>Add User to Invites</Button><Button>Submit</Button>
-					</Form>
-				</Row>
+				<h4 className="text-center">Create a Team</h4>
+				<UserNav />
+				<Form onSubmit={ (e) => this.submit(e) }>
+					<FormGroup row>
+						<Label for="name" md={4}>Name</Label>
+						<Col md={8}>
+							<Input type='text' name='name' id='name' placeholder='Team Name'
+								onChange={this.handleNameChange}
+								invalid={this.state.nameError}
+							/>
+							<FormFeedback>You must choose a tournament name</FormFeedback>
+						</Col>		
+					</FormGroup>
+					<FormGroup row>
+						<Label for="invite" md={4}>Invite People to Your Team</Label>
+						<Col md={8}>
+							<Input type='text' name='invite' id='invite' placeholder="User's Display Name"
+								onChange={this.handleInviteNameChange} 
+								onKeyPress={(e) => { 
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										this.handleAddInvite(); 
+									}
+								}}
+							/>	
+						</Col>
+					</FormGroup>
+					<ListGroup>
+					{
+						this.state.invites.map((name, i) =>
+							(<ListGroupItem key={i}>{name}</ListGroupItem>))
+					}
+    				</ListGroup>
+					{
+						this.state.error && 
+						<Alert color='danger'>{this.state.error}</Alert>
+					}
+					<Button type='button' onClick={this.handleAddInvite}>Add User to Invites</Button><Button>Submit</Button>
+				</Form>
 			</Container>
 		);
 	}

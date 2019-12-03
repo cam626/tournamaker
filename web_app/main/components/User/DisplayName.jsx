@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Label, Button, Input, 
+import { Container, Row, Col, Label, Button, Input, 
 	Form, FormGroup, FormFeedback, FormText } from 'reactstrap';
 import { getDisplayName, updateDisplayName } from '../../api/user/displayName';
 import requireAuth from '../../tools/requireAuth';
@@ -60,23 +60,19 @@ class DisplayName extends React.Component {
 	render() {
 		return (
 			<Container>
-				{
-					this.props.isLoggedIn && 
-					<Row>
-						<UserNav displayName={false} />	
-					</Row>
-				}
-				<Row>
-					{
-						this.props.isLoggedIn ?
-						<h4>Update Your Display Name</h4>
-						: <h4>Please choose a Display Name</h4>
-					}
-				</Row>
-				<Row>
-					<Form onSubmit={ (e) => this.submit(e) }>
-						<FormGroup>
-							<Label for="displayName">Display Name</Label>
+			{
+				this.props.isLoggedIn ?
+				<h4 className="text-center">Update Your Display Name</h4>
+				: <h4 className="text-center">Please choose a Display Name</h4>
+			}
+			{
+				this.props.isLoggedIn && 
+				<UserNav />	
+			}
+				<Form onSubmit={ (e) => this.submit(e) }>
+					<FormGroup row>
+						<Label for="displayName" md={4}>Display Name</Label>
+						<Col md={8}>
 							<Input type='text' name='displayName' id='displayName' placeholder='Display Name'
 								onChange={this.handleNameChange} 
 								valid={this.state.valid == 1}
@@ -85,10 +81,10 @@ class DisplayName extends React.Component {
 							<FormFeedback valid>You successfully updated your Display Name</FormFeedback>
 							<FormFeedback>{this.state.error}</FormFeedback>
 							<FormText>Your Display Name will be how other users can identify you.</FormText>
-						</FormGroup>
-      					<Button>Submit</Button>
-					</Form>
-				</Row>
+						</Col>
+					</FormGroup>
+      				<Button>Submit</Button>
+				</Form>
 			</Container>
 		);
 	}

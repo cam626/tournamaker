@@ -5,7 +5,7 @@ import { NavLink as RRNavLink, withRouter } from 'react-router-dom';
 const UserNav = (props) => {
   return (
     <div>
-      <Nav pills>
+      <Nav fill pills>
         <NavItem>
           <NavLink to='/user/dashboard' tag={RRNavLink}>Dashboard</NavLink>
         </NavItem>
