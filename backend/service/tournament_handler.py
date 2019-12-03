@@ -290,8 +290,9 @@ def tournament_endpoints(app):
 
 		return jsonify({"match_key": match_key.urlsafe()}), 200
 
-	@app.route('/tournament/keys/convert', methods=['POST'])
-	def convert_tournament_keys_to_names():
+	@app.route('/event/keys/convert', methods=['POST'])
+	def convert_event_keys_to_names():
+		# TODO: Move this handler/reorganize tournaments vs events
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
 
@@ -304,20 +305,20 @@ def tournament_endpoints(app):
 		if "keys" not in json_body:
 			return jsonify({"error": "The field 'keys' must be provided"}), 400
 
-		tournament_keys = json_body['keys']
+		event_keys = json_body['keys']
 
 		result = {}
-		for key in tournament_keys:
+		for key in event_keys:
 			try:
 				key_obj = ndb.Key(urlsafe=key)
 			except:
 				continue
 
-			tournament_entity = key_obj.get()
+			event_entity = key_obj.get()
 
-			if not tournament_entity:
+			if not event_entity:
 				continue
 
-			result[key] = tournament_entity.name
+			result[key] = event_entity.to_dict()
 
 		return jsonify(result), 200

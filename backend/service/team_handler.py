@@ -188,6 +188,6 @@ def team_endpoints(app):
 			if not team_entity:
 				continue
 
-			result[key] = team_entity.name
+			result[key] = team_entity.to_dict()
 
 		return jsonify(result), 200
