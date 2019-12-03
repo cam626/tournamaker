@@ -1,12 +1,13 @@
 import React from 'react';
 import { Container, Row, Col, Label, Button, Input, CustomInput, 
-	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem } from 'reactstrap';
+	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem, Alert } from 'reactstrap';
 import TournamentCard from './TournamentCard';
 import findTournament from '../../api/tournament/findTournament';
 import joinTournament from '../../api/tournament/joinTournament';
 import getUser from '../../api/user/getUser';
 import { getTeamsFromKeys } from '../../api/team/getTeam';
 import requireAuth from '../../tools/requireAuth';
+import UserNav from '../User/UserNav';
 
 class FindTournament extends React.Component {
  	constructor(props) {
@@ -33,14 +34,13 @@ class FindTournament extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log(!!this.state.tournament);
 		getUser().then((fetchedUser) => {
     		this.setState({ teams: fetchedUser.teams });
     		getTeamsFromKeys(fetchedUser.teams).then((dict) => this.setState(dict));
     	});
 	}
 
-  	toUser() { this.props.history.push('/user'); }
+  	toUser() { this.props.history.push('/user/dashboard'); }
 
 	handleDNameChange(e) { 
 		this.setState({ 
@@ -102,13 +102,9 @@ class FindTournament extends React.Component {
 
 	render() {
 		return (
-			<Container>
-				<Row>
-					Create a new Team
-				</Row>
-				<Row>
-					<Button type='button' onClick={this.toUser}>Return to User</Button>
-				</Row>
+			<Container>	
+				<h4 className="text-center">Find and Join a Tournament</h4>
+				<UserNav />
 				<Row>
 					<Form onSubmit={ (e) => this.submit(e) }>
 						<FormGroup row>
@@ -166,7 +162,7 @@ class FindTournament extends React.Component {
 						</FormGroup>						
 						{
 							this.state.error && 
-							<h3>{this.state.error}</h3>
+							<Alert color='danger'>{this.state.error}</Alert>
 						}
 						<Button>Join Tournament</Button>
 					</Form>
