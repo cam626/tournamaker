@@ -3,7 +3,7 @@ import keysToDict from '../tools/keysToDict';
 
 const getTeam = getEntityEndpoint('team');
 
-const getTeamsFromKeys = keysToDict('team');
+const getTeamsFromKeys = keysToDict('event');
 
 export {
 	getTeam,

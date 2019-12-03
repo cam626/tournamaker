@@ -9,6 +9,7 @@ class CreateTournament extends React.Component {
  	constructor(props) {
    		super(props);
 
+   		this.toUser = this.toUser.bind(this);
 	   	this.handleNameChange = this.handleNameChange.bind(this);
 	   	this.handleGameChange = this.handleGameChange.bind(this);
 		this.handleStructChange = this.handleStructChange.bind(this);
@@ -43,6 +44,8 @@ class CreateTournament extends React.Component {
 	   		regEndTime: ''
 	   	};
 	}
+
+	toUser() { this.props.history.push('/user/dashboard') }
 
 	handleNameChange(e) { 
 		this.setState({ 

@@ -9,6 +9,7 @@ class CreateTeam extends React.Component {
  	constructor(props) {
    		super(props);
 
+   		this.toUser = this.toUser.bind(this);
 	   	this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleInviteNameChange = this.handleInviteNameChange.bind(this);
 	   	this.handleAddInvite = this.handleAddInvite.bind(this);
@@ -21,6 +22,8 @@ class CreateTeam extends React.Component {
 	   		invites: []
 	   	};
 	}
+
+	toUser() { this.props.history.push('/user/dashboard') }
 
 	handleNameChange(e) { 
 		this.setState({ 

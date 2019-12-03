@@ -13,24 +13,29 @@ class User extends React.Component {
  	constructor(props) {
  		super(props);
 
-	   	this.update = this.update.bind(this);
-	   	this.state = { user: {} };
+	   	this.state = { 
+	   		loaded: false,
+	   		user: {} 
+	   	};
 	}
 	
 	componentDidMount() {
-    	getUser().then((fetchedUser) => {
-    		this.setState({ user: fetchedUser });
-    		getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
-    		getTeamsFromKeys(fetchedUser.teams).then((dict) => {
-    			this.setState(dict);
-    			Object.values(dict).forEach((team) => {
-    				getEventsFromKeys(team.events).then((dict) => this.setState(dict));
-    			});
+    	if (!this.state.loaded) getUser().then((fetchedUser) => {
+    		this.setState({ 
+				loaded: true,
+    			user: fetchedUser
     		});
+    		// getTeamsFromKeys(fetchedUser.team_invites).then((dict) => this.setState(dict));
+    		// getTeamsFromKeys(fetchedUser.teams).then((dict) => {
+    		// 	this.setState(dict);
+    		// 	Object.values(dict).forEach((team) => {
+    		// 		getEventsFromKeys(team.events).then((dict) => this.setState(dict));
+    		// 	});
+    		// });
     	});
   	}
 
-  	update() {this.componentDidMount()}
+  	//update() {this.componentDidMount()}
 
 	render() {
 		return (
@@ -61,7 +66,7 @@ class User extends React.Component {
 					<Row>
 					Tournaments You're Participating In:
 					{
-						this.state.user.teams.map((team) => team.events.map((key) => <TournametCard key={key} {...this.state[key]} />))
+						this.state.user.teams.map((team) => this.state[team] && this.state[team].events.map((key) => <TournamentCard team_name={this.state[team].name} key={key} {...this.state[key]} />))
 					}
 					</Row>
 				}

@@ -41,7 +41,7 @@ class FindTournament extends React.Component {
     	});
 	}
 
-  	toUser() { this.props.history.push('/user'); }
+  	toUser() { this.props.history.push('/user/dashboard'); }
 
 	handleDNameChange(e) { 
 		this.setState({ 
