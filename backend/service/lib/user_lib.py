@@ -20,7 +20,7 @@ def create_user(user_cred):
 
 	return user_key
 
-def read_user(user_cred, **kwargs):
+def read_user(user_cred):
 	'''
 		Attempt to read a user attached to a set of user credentials. If the user credentials are
 		not associated with a user object, a new object will be created and returned.
@@ -32,11 +32,11 @@ def read_user(user_cred, **kwargs):
 	'''
 	# Firebase will make sure that 'sub' is unique
 	user_key = ndb.Key(User, user_cred['sub'])
-	user_entity = user_key.get(**kwargs)
+	user_entity = user_key.get()
 
 	if not user_entity:
 		user_key = create_user(user_cred)
-		user_entity = user_key.get(**kwargs)
+		user_entity = user_key.get()
 
 	return user_entity
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Label, Button, Input, CustomInput, 
-	Form, FormGroup, FormFeedback, FormText, ListGroup, ListGroupItem } from 'reactstrap';
+	Form, FormGroup, FormFeedback, ListGroup, ListGroupItem } from 'reactstrap';
 import createTeam from '../../api/team/createTeam';
 import requireAuth from '../../tools/requireAuth';
 
@@ -71,15 +71,15 @@ class CreateTeam extends React.Component {
 							<Col md={10}>
 								<Input type='text' name='name' id='name' placeholder='Team Name'
 									onChange={this.handleNameChange}
-									invalid={this.state.nameError != ''}
+									invalid={this.state.nameError}
 								/>
 								<FormFeedback>You must choose a tournament name</FormFeedback>
 							</Col>		
 						</FormGroup>
 								<FormGroup row>
-									<Label for="" md={3}>Invite People to Your Team</Label>
+									<Label for="invite" md={3}>Invite People to Your Team</Label>
 									<Col md={9}>
-										<Input type='text' name='type' id='type' placeholder="User's Display Name"
+										<Input type='text' name='invite' id='invite' placeholder="User's Display Name"
 											onChange={this.handleInviteNameChange} 
 											onKeyPress={(e) => { 
 												if (e.key === 'Enter') {

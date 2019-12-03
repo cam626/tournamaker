@@ -140,18 +140,7 @@ def tournament_endpoints(app):
 		if not tournament_entity:
 			return jsonify({"error": "Tournament not found"}), 404
 
-		user_entity = user_lib.get_user_by_display_name(display_name)
-
-		if user_entity is None:
-			return jsonify({"error": "User not found"}), 404
-
-		result = {
-			"tournament": tournament_entity.to_dict(),
-			"user_key": user_entity.key.urlsafe(),
-			"tournament_key": tournament_entity.key.urlsafe()
-		}
-
-		return jsonify(result), 200
+		return jsonify(tournament_entity.to_dict()), 200
 
 	@app.route('/tournament/<tournament_key>', methods=['GET'])
 	def read_tournament(tournament_key):

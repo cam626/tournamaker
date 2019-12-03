@@ -87,26 +87,19 @@ def user_endpoints(app):
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return jsonify({"error": "Unauthorized"}), 401
-		user_entity = user_lib.read_user(user_cred, use_cache=False, use_memcache=False)
+		user_entity = user_lib.read_user(user_cred)
 
 		try:
+			print(team_key)
 			team_key = ndb.Key(urlsafe=team_key)
+			print(team_key)
 		except:
 			return jsonify({"error": "Team not found"}), 404
 
-		team_entity = team_key.get(use_cache=False, use_memcache=False)
+		team_entity = team_key.get()
 
 		if user_entity.key.urlsafe() not in team_entity.invited_members:
 			return jsonify({"error": "No active invite to given team"}), 400
-
-		if user_entity.key.urlsafe() in team_entity.members:
-			team_entity.invited_members.remove(user_entity.key.urlsafe())
-			team_entity.put()
-
-			user_entity.team_invites.remove(team_entity.key.urlsafe())
-			user_entity.put()
-
-			return jsonify({"error": "User already on team"}), 400
 
 		# Move user from invited to member
 		team_entity.invited_members.remove(user_entity.key.urlsafe())
@@ -128,14 +121,14 @@ def user_endpoints(app):
 		# Reject the request if the token was invalid
 		if user_cred == None:
 			return jsonify({"error": "Unauthorized"}), 401
-		user_entity = user_lib.read_user(user_cred, use_cache=False, use_memcache=False)
+		user_entity = user_lib.read_user(user_cred)
 
 		try:
 			team_key = ndb.Key(urlsafe=team_key)
 		except:
 			return jsonify({"error": "Team not found"}), 404
 
-		team_entity = team_key.get(use_cache=False, use_memcache=False)
+		team_entity = team_key.get()
 
 		if user_entity.key.urlsafe() not in team_entity.invited_members:
 			return jsonify({"error": "No active invite to given team"}), 400
@@ -149,34 +142,3 @@ def user_endpoints(app):
 		user_entity.put()
 
 		return "Success", 200
-
-	@app.route('/user/keys/convert', methods=['POST'])
-	def convert_user_keys_to_names():
-		# Get the user credentials that correspond to the token
-		user_cred = authenticate_token(request)
-
-		# Reject the request if the token was invalid
-		if user_cred == None:
-			return jsonify({"error": "Unauthorized"}), 401
-
-		json_body = request.get_json()
-
-		if "keys" not in json_body:
-			return jsonify({"error": "The field 'keys' must be provided"}), 400
-
-		user_keys = json_body['keys']
-
-		result = {}
-		for key in user_keys:
-			try:
-				key_obj = ndb.Key(urlsafe=key)
-			except:
-				continue
-			
-			user_entity = key_obj.get()
-			if user_entity is None:
-				continue
-
-			result[key] = user_entity.display_name
-
-		return jsonify(result), 200
