@@ -12,19 +12,26 @@ class TeamCard extends React.Component {
    	}
 
    	componentDidMount() {
-   		getNamesFromKeys(this.props.members)
-      .then((dict) => this.setState({ members: dict }));
+   		this.componentDidUpdate();
    	}
+
+  	componentDidUpdate() {
+      console.log(this.props);
+    	this.props.members && getNamesFromKeys(this.props.members)
+    	.then((dict) => this.setState({ members: dict }));
+  	}
 
   	render() {
 		return (
     		<div>{ this.state.members &&
     			<Card body>
       				<CardTitle>Team: {this.props.name}</CardTitle>
+	      			<CardText>
     	  				Members: 
       					<ListGroup>
       						{Object.entries(this.state.members).map(([key, value]) => (<ListGroupItem key={key}>{value}</ListGroupItem>))}
       					</ListGroup>
+      				</CardText>
     			</Card>
     		}</div>
   		);	

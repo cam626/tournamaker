@@ -1,3 +1,3 @@
 import keysToDict from '../tools/keysToDict';
 
-export default keysToDict('event');
+export default keysToDict('team');
