@@ -4,6 +4,10 @@ import { withRouter } from 'react-router-dom';
 export default function requireAuth(Component) {
 
   class AuthenticatedComponent extends React.Component {
+    componentDidMount() {
+      this.checkAuth();
+    }
+
     componentDidUpdate() {
       this.checkAuth();
     }

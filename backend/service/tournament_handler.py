@@ -140,7 +140,18 @@ def tournament_endpoints(app):
 		if not tournament_entity:
 			return jsonify({"error": "Tournament not found"}), 404
 
-		return jsonify(tournament_entity.to_dict()), 200
+		user_entity = user_lib.get_user_by_display_name(display_name)
+
+		if user_entity is None:
+			return jsonify({"error": "User not found"}), 404
+
+		result = {
+			"tournament": tournament_entity.to_dict(),
+			"user_key": user_entity.key.urlsafe(),
+			"tournament_key": tournament_entity.key.urlsafe()
+		}
+
+		return jsonify(result), 200
 
 	@app.route('/tournament/<tournament_key>', methods=['GET'])
 	def read_tournament(tournament_key):
@@ -279,9 +290,8 @@ def tournament_endpoints(app):
 
 		return jsonify({"match_key": match_key.urlsafe()}), 200
 
-	@app.route('/event/keys/convert', methods=['POST'])
-	def convert_event_keys_to_names():
-		# TODO: Move this handler/reorganize tournaments vs events
+	@app.route('/tournament/keys/convert', methods=['POST'])
+	def convert_tournament_keys_to_names():
 		# Get the user credentials that correspond to the token
 		user_cred = authenticate_token(request)
 
@@ -294,20 +304,20 @@ def tournament_endpoints(app):
 		if "keys" not in json_body:
 			return jsonify({"error": "The field 'keys' must be provided"}), 400
 
-		event_keys = json_body['keys']
+		tournament_keys = json_body['keys']
 
 		result = {}
-		for key in event_keys:
+		for key in tournament_keys:
 			try:
 				key_obj = ndb.Key(urlsafe=key)
 			except:
 				continue
 
-			event_entity = key_obj.get()
+			tournament_entity = key_obj.get()
 
-			if not event_entity:
+			if not tournament_entity:
 				continue
 
-			result[key] = event_entity.to_dict()
+			result[key] = tournament_entity.name
 
 		return jsonify(result), 200

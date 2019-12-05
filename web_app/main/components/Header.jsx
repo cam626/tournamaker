@@ -16,23 +16,25 @@ class Header extends React.Component {
 	render() {
 		return (
 			<Navbar color='light' light expand='md' sticky='top'>
-				<NavbarBrand to='/' tag={RRNavLink}>Tournamaker</NavbarBrand>
+				<NavbarBrand to='/home' tag={RRNavLink}>Tournamaker</NavbarBrand>
 				<NavbarToggler onClick={this.toggle} />
 				<Collapse isOpen={this.state.isOpen} navbar>
 					<Nav className='ml-auto' navbar>
 						<NavItem>
-							<NavLink to='/' tag={RRNavLink}>Home</NavLink>
+							<NavLink to='/home' tag={RRNavLink}>Home</NavLink>
 						</NavItem>
 						<NavItem>
-							{
-								this.props.isLoggedIn ?
-								<div>
-									<NavLink to='/user' tag={RRNavLink}>User</NavLink>
-									<NavLink onClick={this.props.signOut}>Log Out</NavLink>
-								</div>
-								: <NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink>
-							}
+							<NavLink to='/home' tag={RRNavLink}>Public Events</NavLink>
 						</NavItem>
+						{
+							this.props.isLoggedIn && <NavItem><NavLink to='/user/dashboard' tag={RRNavLink}>User</NavLink></NavItem>
+						}
+						{
+							this.props.isLoggedIn && <NavItem><NavLink onClick={this.props.signOut}>Log Out</NavLink></NavItem>
+						}
+						{
+							!this.props.isLoggedIn && <NavItem><NavLink to='/signin' tag={RRNavLink}>Sign In</NavLink></NavItem>
+						}	
 					</Nav>
 				</Collapse>
 			</Navbar>
