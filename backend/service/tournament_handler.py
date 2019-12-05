@@ -1,6 +1,6 @@
 
 from lib.auth_lib import authenticate_token
-from lib import tournament_lib, user_lib
+from lib import tournament_lib, user_lib, match_lib
 from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
@@ -113,11 +113,13 @@ def tournament_endpoints(app):
 			if "elimination_number" not in json_body or not isinstance(json_body['elimination_number'], int):
 				return jsonify({"error": "The field 'elimination_number' is required with the 'n_elimination' tournament structure"}), 400
 
+		user_entity = user_lib.read_user(user_cred)
+		json_body["owner"] = user_entity.key.urlsafe()
+
 		# Create a tournament from the request body
 		tournament_key = tournament_lib.create_tournament(user_cred, **json_body)
 
 		# Now we need to add the tournament key to the list of tournaments on the user
-		user_entity = user_lib.read_user(user_cred)
 		user_entity.tournaments.append(tournament_key.urlsafe())
 		user_entity.put()
 
@@ -322,3 +324,40 @@ def tournament_endpoints(app):
 			result[key] = event_entity.to_dict()
 
 		return jsonify(result), 200
+
+	@app.route('/tournament/<tournament_key>/start', methods=['POST'])
+	def start_tournament(tournament_key):
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+
+		try:
+			tournament_key = ndb.Key(urlsafe=tournament_key)
+			tournament_entity = tournament_key.get(use_cache=False, use_memcache=False)
+		except:
+			return jsonify({"error": "Tournament not found"}), 404
+
+		# Make sure that this user is the owner of the tournament
+		user_entity = user_lib.read_user(user_cred)
+		if user_entity.key.urlsafe() != tournament_entity.owner:
+			return jsonify({"error": "You are not the owner of this tournament"}), 401
+
+		teams = tournament_entity.teams
+		rounds = None
+		if tournament_entity.tournament_structure == "round_robin":
+			rounds = tournament_lib.create_balanced_round_robin(teams)
+		else:
+			return jsonify({"error": "Tournament structure not yet supported"}), 400
+	
+		for r in rounds:
+			for game in r:
+				match_key = match_lib.create_match(tournament_entity.key, home=game[0], away=game[1])
+				print(match_key.urlsafe())
+				tournament_entity.matches.append(match_key.urlsafe())
+
+		tournament_entity.put()
+
+		return jsonify(rounds), 200

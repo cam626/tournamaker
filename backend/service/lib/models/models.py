@@ -20,6 +20,7 @@ class User(ndb.Model):
 class Tournament(ndb.Model):
 	# Unique under creator
 	name = ndb.StringProperty(required=True)
+	owner = ndb.StringProperty(required=True)
 
 	# Can be anything except empty string
 	game_type = ndb.StringProperty(required=True)
@@ -74,8 +75,8 @@ class Match(ndb.Model):
 	'''
 
 	# Only 2 teams can compete in a match
-	team1 = ndb.StringProperty(required=True)
-	team2 = ndb.StringProperty(required=True)
+	home = ndb.StringProperty(required=True)
+	away = ndb.StringProperty(required=True)
 	
 	winner = ndb.StringProperty()
 	loser = ndb.StringProperty()
