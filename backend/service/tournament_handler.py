@@ -280,18 +280,6 @@ def tournament_endpoints(app):
 
 		return "Success", 200
 
-	@app.route('/tournament/<tournament_key>/match', methods=['POST'])
-	def add_match(tournament_key):
-		match_parameters = {
-			"team1": "This would be a teamkey",
-			"team2": "This would be another teamkey",
-			"num_games": 2
-		}
-		tournament_key = ndb.Key(urlsafe=tournament_key)
-		match_key = tournament_lib.add_match(tournament_key, **match_parameters)
-
-		return jsonify({"match_key": match_key.urlsafe()}), 200
-
 	@app.route('/event/keys/convert', methods=['POST'])
 	def convert_event_keys_to_names():
 		# TODO: Move this handler/reorganize tournaments vs events
@@ -355,7 +343,6 @@ def tournament_endpoints(app):
 		for r in rounds:
 			for game in r:
 				match_key = match_lib.create_match(tournament_entity.key, home=game[0], away=game[1])
-				print(match_key.urlsafe())
 				tournament_entity.matches.append(match_key.urlsafe())
 
 		tournament_entity.put()

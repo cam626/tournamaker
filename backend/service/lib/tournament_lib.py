@@ -66,17 +66,6 @@ def read_tournament_from_display_name(display_name, tournament_name):
 	# Return the entity
 	return tournament_key.get()
 
-def add_match(tournament_key, **match_params):
-	'''
-		Add a single match to a tournament.
-	'''
-	match_key = match_lib.create_match(tournament_key, **match_params)
-	tournament_entity = tournament_key.get()
-	tournament_entity.matches.append(match_key.urlsafe())
-	tournament_entity.put()
-
-	return match_key
-
 def create_balanced_round_robin(players):
 	"""
 		Create a schedule for the players in the list and return it.
