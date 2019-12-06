@@ -348,3 +348,17 @@ def tournament_endpoints(app):
 		tournament_entity.put()
 
 		return jsonify(rounds), 200
+
+	@app.route('/tournament/<tournament_key>/match/<match_key>', methods=['GET'])
+	def read_match(tournament_key, match_key):
+		# Get the user credentials that correspond to the token
+		user_cred = authenticate_token(request)
+
+		# Reject the request if the token was invalid
+		if user_cred == None:
+			return jsonify({"error": "Unauthorized"}), 401
+
+		match_entity = ndb.Key(urlsafe=match_key).get()
+
+		return jsonify(match_entity.to_dict()), 200
+
