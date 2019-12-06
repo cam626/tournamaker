@@ -39,6 +39,10 @@ def team_endpoints(app):
 
 		member_entities = []
 
+		# The user that created the team should automatically be a member
+		user_entity = user_lib.read_user(user_cred)
+		json_body["members"] = [user_entity.key.urlsafe()]
+
 		# Get the entities of the invited users
 		invited_members_display_names = set(json_body.pop("invited_members", []))
 		json_body["invited_members"] = []
@@ -48,19 +52,18 @@ def team_endpoints(app):
 				member_entities.append(member)
 			
 				# Add the invited user keys to the list of invited members
-				json_body["invited_members"].append(member.key.urlsafe())
-
-		# The user that created the team should automatically be a member
-		user_entity = user_lib.read_user(user_cred)
-		json_body["members"] = [user_entity.key.urlsafe()]
+				# and prevent inviting yourself
+				if member.key.urlsafe() != user_entity.key.urlsafe():
+					json_body["invited_members"].append(member.key.urlsafe())
 
 		# Create a team from the request body
 		team_key = team_lib.create_team(**json_body)
 
 		# Add each invite to the invited users' entities
 		for member in member_entities:
-			member.team_invites.append(team_key.urlsafe())
-			member.put()
+			if member.key.urlsafe() != user_entity.key.urlsafe():
+				member.team_invites.append(team_key.urlsafe())
+				member.put()
 
 		# Add this team to the list of teams for the creator
 		user_entity.teams.append(team_key.urlsafe())
